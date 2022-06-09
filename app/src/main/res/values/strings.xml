@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BlindGPS</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="API_KEY">AIzaSyDhJ3PoJ-u1f6aRNo0pdkKCqz1dXS2a7K0</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
