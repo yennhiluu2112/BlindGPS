@@ -67,7 +67,7 @@
             app:layout_constraintStart_toEndOf="@+id/ic_item"
             app:layout_constraintTop_toTopOf="parent">
 
-            <EditText
+            <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -84,6 +84,22 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
+
+            <ImageView
+                android:id="@+id/iv_Fav"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_no_fav"
+                app:layout_constraintBottom_toTopOf="@+id/tv_time"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.025"
+                app:layout_constraintHorizontal_bias="0.35"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
+
+
 
             <TextView
                 android:id="@+id/tv_time"

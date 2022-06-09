@@ -1,4 +1,4 @@
-package com.example.blindgps.view;
+package com.example.blindgps.activities;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -16,8 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -59,13 +57,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -277,7 +273,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         marker2 = new MarkerOptions()
                                 .position(latLng2)
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                                .title("She is here");
+                                .title(setMarkerName(la2, lo2));
                         marker_2 = mMap.addMarker(marker2);
                         marker_2.setVisible(true);
 
@@ -289,41 +285,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .fillColor(Color.argb(70,150,50,50));
                         mMap.addCircle(circleOptions);
 
-                        if (locationsArrayList.isEmpty()){
-                            MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, null);
-                            insert_data.execute();
-                            sendNotification();
-                        }
-                        else{
-                            RecentLocations last_location = locationsArrayList.get(locationsArrayList.size()-1);
-                            double la_from = Double.parseDouble(last_location.getLatitude())-0.00005;
-                            double la_to = Double.parseDouble(last_location.getLatitude())+0.00005;
-                            double lo_from = Double.parseDouble(last_location.getLongitude())-0.00005;
-                            double lo_to = Double.parseDouble(last_location.getLongitude())+0.00005;
-                            double la2_d = Double.parseDouble(la2);
-                            double lo2_d = Double.parseDouble(lo2);
-                            String name ="";
-
-                            if (!(la_from<la2_d && la_to>la2_d && lo_from<lo2_d && lo_to>lo2_d)) {
-                                for (RecentLocations l : locationsArrayList){
-                                    double la_d = Double.parseDouble(l.getLatitude());
-                                    double lo_d= Double.parseDouble(l.getLongitude());
-                                    if (la_from>la_d && la_to<la_d && lo_from>lo_d && lo_to<lo_d){
-                                        name = l.getLocation_name();
-                                        break;
-                                    }
-                                    else
-                                        name = "New Location";
-                                }
-                                MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
-                                insert_data.execute();
-                                sendNotification();
-                            }
-                        }
-
-
-
-
+                        InsertNewLocation(la2, lo2);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -332,6 +294,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
         }
     };
+
+    private String setMarkerName(String la2, String lo2){
+        String title="";
+        for (RecentLocations l : locationsArrayList) {
+
+            double la_from = Double.parseDouble(l.getLatitude())-0.00005;
+            double la_to = Double.parseDouble(l.getLatitude())+0.00005;
+            double lo_from = Double.parseDouble(l.getLongitude())-0.00005;
+            double lo_to = Double.parseDouble(l.getLongitude())+0.00005;
+            double la_d = Double.parseDouble(la2);
+            double lo_d = Double.parseDouble(lo2);
+
+            if (la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d) {
+                title = l.getLocation_name();
+                break;
+            }
+            else{
+                title="Your partner is here";
+            }
+        }
+        return title;
+    }
+
+    private void InsertNewLocation(String la2, String lo2){
+        if (locationsArrayList.isEmpty()){
+            MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, null);
+            insert_data.execute();
+            sendNotification();
+        }
+        else{
+            RecentLocations last_location = locationsArrayList.get(locationsArrayList.size()-1);
+            double la_from = Double.parseDouble(last_location.getLatitude())-0.00005;
+            double la_to = Double.parseDouble(last_location.getLatitude())+0.00005;
+            double lo_from = Double.parseDouble(last_location.getLongitude())-0.00005;
+            double lo_to = Double.parseDouble(last_location.getLongitude())+0.00005;
+            double la2_d = Double.parseDouble(la2);
+            double lo2_d = Double.parseDouble(lo2);
+            String name ="";
+
+            if (!(la_from<la2_d && la_to>la2_d && lo_from<lo2_d && lo_to>lo2_d)) {
+                for (RecentLocations l : locationsArrayList){
+                    double la_d = Double.parseDouble(l.getLatitude());
+                    double lo_d= Double.parseDouble(l.getLongitude());
+                    if (la_from>la_d && la_to<la_d && lo_from>lo_d && lo_to<lo_d){
+                        name = l.getLocation_name();
+                        break;
+                    }
+                    else
+                        name = "New Location";
+                }
+                MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
+                insert_data.execute();
+                sendNotification();
+            }
+
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -354,10 +373,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             else{
                 getCurrentLocation();
+                addFavMarker();
             }
 
         }
 
+    }
+
+    private void addFavMarker() {
+        for (RecentLocations l : locationsArrayList){
+            if (l.getFav()){
+                String la = l.getLatitude();
+                String lo = l.getLongitude();
+                if (lo2!=null && la2!=null && la!=la2 && lo!=lo2 && lo1!=0 && la1!=0 && String.valueOf(lo1)!=lo && String.valueOf(la1)!=la)
+                {
+                    LatLng latLng = new LatLng(Double.parseDouble(la), Double.parseDouble(lo));
+                    MarkerOptions marker = new MarkerOptions()
+                            .position(latLng)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                            .title(l.getLocation_name());
+                    mMap.addMarker(marker);
+
+                    CircleOptions circleOptions = new CircleOptions()
+                            .center(latLng)
+                            .radius(100)
+                            .strokeWidth(3f)
+                            .strokeColor(Color.rgb(255,165,0))
+                            .fillColor(Color.argb(70,255,165,0));
+                    mMap.addCircle(circleOptions);
+                }
+
+            }
+        }
     }
 
     public void FindRoutes(LatLng start, LatLng end){
@@ -463,6 +510,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void ShowHistory(Bundle extras) {
         try {
+            mMap.clear();
             binding.imvHistory.setVisibility(View.GONE);
             binding.imvDirection.setVisibility(View.GONE);
             binding.constraintBack.setVisibility(View.VISIBLE);
@@ -489,8 +537,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .strokeColor(Color.rgb(255,165,0))
                     .fillColor(Color.argb(70,255,165,0));
             mMap.addCircle(circleOptions);
-            marker_1.setVisible(false);
-            marker_2.setVisible(false);
+//            marker_1.setVisible(false);
+//            marker_2.setVisible(false);
 
             binding.tvTime.setText(locations.getTime());
             binding.tvTimeCount.setText(time_count);
@@ -500,9 +548,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 public void onClick(View view) {
                     Intent intent = new Intent(MapsActivity.this, RecentLocationsActivity.class);
                     startActivity(intent);
-                    marker_1.setVisible(true);
-                    marker_2.setVisible(true);
+//                    marker_1.setVisible(true);
+//                    marker_2.setVisible(true);
                     marker_.remove();
+
                 }
             });
         }
@@ -572,7 +621,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected Void doInBackground(Void... voids) {
             try{
 
-                locationsDAO.insert(new RecentLocations(lo, la, name, new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime())));
+                locationsDAO.insert(new RecentLocations(lo, la, name, new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()), false));
 
                 return null;
             }

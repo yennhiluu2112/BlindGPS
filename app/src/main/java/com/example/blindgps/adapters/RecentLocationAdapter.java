@@ -1,9 +1,8 @@
-package com.example.blindgps.view;
+package com.example.blindgps.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +15,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.example.blindgps.R;
-import com.example.blindgps.listener.OnLocationItemClickListener;
+import com.example.blindgps.listeners.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.viewmodel.AppDatabase;
 import com.example.blindgps.viewmodel.RecentLocationsDAO;
@@ -78,11 +76,34 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
 
             Delete_Location(holder.tv_delete, position);
 
+            if (locations.get(position).getFav()){
+                holder.iv_fav.setImageResource(R.drawable.ic_fav);
+            }
+            else{
+                holder.iv_fav.setImageResource(R.drawable.ic_no_fav);
+            }
+
             holder.tv_name.setText(locations.get(position).getLocation_name());
             holder.tv_time.setText(locations.get(position).getTime());
             holder.swipeRevealLayout.setLayoutParams(params);
 
+            holder.iv_fav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    boolean isFav;
+                    if (locations.get(holder.getAdapterPosition()).getFav())
+                    {
+                        isFav = false;
+                        holder.iv_fav.setImageResource(R.drawable.ic_no_fav);
+                    }
+                    else{
+                        isFav = true;
+                        holder.iv_fav.setImageResource(R.drawable.ic_fav);
+                    }
 
+                    listener.onFav(holder.getAdapterPosition(), isFav);
+                }
+            });
 
         }
         catch (Exception e){
@@ -99,10 +120,11 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
         final AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Button btn_ok = view1.findViewById(R.id.btn_ok);
-        Button btn_cancel = view1.findViewById(R.id.btn_back);
+        Button btn_one = view1.findViewById(R.id.btn_one);
+        Button btn_all = view1.findViewById(R.id.btn_all);
+        TextView tv_cancel = view1.findViewById(R.id.tv_cancel);
 
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
@@ -116,16 +138,24 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
             }
         });
 
-        btn_ok.setOnClickListener(new View.OnClickListener() {
+        btn_one.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try{
-                    listener.onDelete(position);
+                    listener.onDelete(position, true);
                     alertDialog.dismiss();
                 }
                 catch(Exception e){
                     e.printStackTrace();
                 }
+            }
+        });
+
+        btn_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onDelete(position, false);
+                alertDialog.dismiss();
             }
         });
     }
@@ -186,7 +216,7 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
         ConstraintLayout layout, constraint1;
         TextView tv_time, tv_delete;
         EditText tv_name;
-        ImageView iv_edit;
+        ImageView iv_edit, iv_fav;
 
         public ViewHolder(@NonNull View itemView) {
 
@@ -198,6 +228,7 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
             iv_edit = itemView.findViewById(R.id.iv_edit);
             swipeRevealLayout = itemView.findViewById(R.id.swipe_layout);
             tv_delete = itemView.findViewById(R.id.tv_delete);
+            iv_fav = itemView.findViewById(R.id.iv_Fav);
 
         }
     }

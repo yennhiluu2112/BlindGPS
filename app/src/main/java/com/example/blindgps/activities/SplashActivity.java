@@ -1,4 +1,4 @@
-package com.example.blindgps.view;
+package com.example.blindgps.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

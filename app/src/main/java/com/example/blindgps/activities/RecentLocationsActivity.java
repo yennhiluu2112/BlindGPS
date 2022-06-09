@@ -1,30 +1,26 @@
-package com.example.blindgps.view;
+package com.example.blindgps.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.DatePicker;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.blindgps.R;
-import com.example.blindgps.databinding.ActivityMapsBinding;
+import com.example.blindgps.adapters.RecentLocationAdapter;
 import com.example.blindgps.databinding.ActivityRecentLocationsBinding;
-import com.example.blindgps.listener.ExecuteQueryListener;
-import com.example.blindgps.listener.OnLocationItemClickListener;
+import com.example.blindgps.listeners.ExecuteQueryListener;
+import com.example.blindgps.listeners.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.viewmodel.AppDatabase;
 import com.example.blindgps.viewmodel.RecentLocationsDAO;
@@ -34,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RecentLocationsActivity extends AppCompatActivity {
@@ -43,10 +38,9 @@ public class RecentLocationsActivity extends AppCompatActivity {
     private AppDatabase appDatabase;
     private RecentLocationsDAO locationsDAO;
     private LinearLayoutManager manager;
-    private static ArrayList<RecentLocations> locationList;
+    private static ArrayList<RecentLocations> locationList, locationListByDate;
     private static String date_from, date_to;
-    private static Boolean isRotate=false, isDatePicker=false;
-    private ArrayList<RecentLocations> locationListByDate;
+    private static Boolean isRotate=false, isFirst=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +60,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
         binding.imvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isDatePicker = false;
                 Intent intent = new Intent(RecentLocationsActivity.this, MapsActivity.class);
                 startActivity(intent);
             }
@@ -80,7 +73,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
         locationAdapter = new RecentLocationAdapter(layoutParams, locationList, new OnLocationItemClickListener() {
             @Override
             public void onEdit(int position, String name) {
-                RecentLocationsActivity.Update_Data update_data = new RecentLocationsActivity.Update_Data(name, position, locationList.get(position).getLatitude(), locationList.get(position).getLongitude(), new ExecuteQueryListener() {
+                RecentLocationsActivity.Update_Data update_data = new RecentLocationsActivity.Update_Data(name, locationList.get(position).getLatitude(), locationList.get(position).getLongitude(), new ExecuteQueryListener() {
                     @Override
                     public void onStart() {
 
@@ -116,8 +109,8 @@ public class RecentLocationsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onDelete(int position) {
-                RecentLocationsActivity.Delete_Data delete_data = new RecentLocationsActivity.Delete_Data(position, new ExecuteQueryListener() {
+            public void onDelete(int position, boolean isOne) {
+                RecentLocationsActivity.Delete_Data delete_data = new RecentLocationsActivity.Delete_Data(position, isOne, new ExecuteQueryListener() {
                     @Override
                     public void onStart() {
 
@@ -134,6 +127,23 @@ public class RecentLocationsActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onFav(int position, boolean isFav) {
+                RecentLocationsActivity.Set_Fav set_fav = new RecentLocationsActivity.Set_Fav(position, isFav, new ExecuteQueryListener(){
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onEnd() {
+                        RecentLocationsActivity.Load_Data load_data = new RecentLocationsActivity.Load_Data();
+                        load_data.execute();
+                    }
+                });
+                set_fav.execute();
+            }
+
+            @Override
             public void onEnd() {
                 locationAdapter.notifyDataSetChanged();
 
@@ -144,6 +154,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
         FindLocation();
         ChooseDate();
+        SetFav();
 
         binding.ivRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,6 +165,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
                 date_from ="";
                 date_to="";
                 isRotate=true;
+                isFirst=true;
                 if (isRotate){
                     Runnable runnable = new Runnable() {
                         @Override
@@ -178,6 +190,9 @@ public class RecentLocationsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void SetFav() {
     }
 
     private void FindLocation(){
@@ -235,7 +250,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
                         date_from = simpleDateFormat.format(calendar.getTime());
                         binding.tvDate1.setText("From: "+ date_from);
-                        isDatePicker = true;
                         loadListByDate();
                     }
                 },year,month,day);
@@ -254,7 +268,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
                         date_to = simpleDateFormat.format(calendar.getTime());
                         binding.tvDate2.setText("To: "+ date_to);
-                        isDatePicker = true;
                         loadListByDate();
                     }
                 },year,month,day);
@@ -282,7 +295,9 @@ public class RecentLocationsActivity extends AppCompatActivity {
                             locationAdapter.loadListLocation(locationList);
                             locationAdapter.notifyDataSetChanged();
                             binding.progressCircular.setVisibility(View.GONE);
+                            isFirst=true;
                         } else {
+                            isFirst = false;
                             locationAdapter.loadListLocation(locationListByDate);
                             locationAdapter.notifyDataSetChanged();
                             binding.progressCircular.setVisibility(View.GONE);
@@ -364,12 +379,10 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
     class Update_Data extends AsyncTask<Void, Void, Void>{
         String name_new;
-        int position;
         String latitude, longitude;
         ExecuteQueryListener listener;
-        public Update_Data(String name_new, int position, String la, String lo, ExecuteQueryListener listener) {
+        public Update_Data(String name_new, String la, String lo, ExecuteQueryListener listener) {
             this.name_new = name_new;
-            this.position = position;
             this.latitude = la;
             this.longitude = lo;
             this.listener = listener;
@@ -401,8 +414,74 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
     class Delete_Data extends AsyncTask<Void, Void, Void> {
         int position;
+        boolean isOne;
         ExecuteQueryListener listener;
-        public Delete_Data(int position, ExecuteQueryListener listener) {
+        public Delete_Data(int position, boolean isOne, ExecuteQueryListener listener) {
+            this.position = position;
+            this.listener = listener;
+            this.isOne = isOne;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                if (!isFirst){
+                    RecentLocations location_ = locationListByDate.get(position) ;
+                    for (int i=0; i< locationList.size(); i++) {
+                        if (location_.getLatitude() == locationList.get(i).getLatitude() && location_.getLongitude() == locationList.get(i).getLongitude()){
+                            this.position = i;
+                        }
+                    }
+                }
+
+                if (isOne){
+                    locationsDAO.delete(locationList.get(position));
+                }
+                else{
+                    RecentLocations location = locationList.get(position);
+                    double la_from = Double.parseDouble(location.getLatitude())-0.00005;
+                    double la_to = Double.parseDouble(location.getLatitude())+0.00005;
+                    double lo_from = Double.parseDouble(location.getLongitude())-0.00005;
+                    double lo_to = Double.parseDouble(location.getLongitude())+0.00005;
+
+
+                    for (int i=0; i< locationList.size(); i++) {
+                        double la_d = Double.parseDouble(locationList.get(i).getLatitude());
+                        double lo_d = Double.parseDouble(locationList.get(i).getLongitude());
+                        if (la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d) {
+                            locationsDAO.delete(locationList.get(i));
+                        }
+
+                    }
+                }
+
+                return null;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            listener.onEnd();
+        }
+    }
+
+
+    class Set_Fav extends AsyncTask<Void, Void, Void>{
+        int position;
+        boolean isFav;
+        ExecuteQueryListener listener;
+        public Set_Fav(int position, boolean isFav, ExecuteQueryListener listener) {
+            this.isFav = isFav;
             this.position = position;
             this.listener = listener;
         }
@@ -415,21 +494,15 @@ public class RecentLocationsActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             try{
-                RecentLocations location = locationList.get(position);
-                double la_from = Double.parseDouble(location.getLatitude())-0.00005;
-                double la_to = Double.parseDouble(location.getLatitude())+0.00005;
-                double lo_from = Double.parseDouble(location.getLongitude())-0.00005;
-                double lo_to = Double.parseDouble(location.getLongitude())+0.00005;
-
-
-                for (int i=0; i< locationList.size(); i++) {
-                    double la_d = Double.parseDouble(locationList.get(i).getLatitude());
-                    double lo_d = Double.parseDouble(locationList.get(i).getLongitude());
-                    if (la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d) {
-                        locationsDAO.delete(locationList.get(i));
+                if (!isFirst){
+                    RecentLocations location_ = locationListByDate.get(position) ;
+                    for (int i=0; i< locationList.size(); i++) {
+                        if (location_.getLatitude() == locationList.get(i).getLatitude() && location_.getLongitude() == locationList.get(i).getLongitude()){
+                            this.position = i;
+                        }
                     }
-
                 }
+                locationsDAO.setFav(locationList.get(position).getId(), isFav);
                 return null;
             }
             catch(Exception e){

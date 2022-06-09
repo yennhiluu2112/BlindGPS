@@ -11,6 +11,11 @@ import java.io.Serializable;
 public class RecentLocations implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private String longitude;
+    private String latitude;
+    private String location_name;
+    private String time;
+    private Boolean isFav;
 
     public int getId() {
         return id;
@@ -36,6 +41,14 @@ public class RecentLocations implements Serializable {
         this.latitude = latitude;
     }
 
+    public Boolean getFav() {
+        return isFav;
+    }
+
+    public void setFav(Boolean fav) {
+        isFav = fav;
+    }
+
     public String getLocation_name() {
         return location_name;
     }
@@ -52,16 +65,12 @@ public class RecentLocations implements Serializable {
         this.time = time;
     }
 
-    private String longitude;
-    private String latitude;
-    private String location_name;
-    private String time;
-
-    public RecentLocations(String longitude, String latitude, String location_name, String time) {
+    public RecentLocations(String longitude, String latitude, String location_name, String time, Boolean isFav) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.location_name = location_name;
         this.time = time;
+        this.isFav = isFav;
     }
 
 
