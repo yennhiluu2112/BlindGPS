@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.example.blindgps.databinding.ActivityRecentLocationsBinding;
 import com.example.blindgps.listeners.ExecuteQueryListener;
 import com.example.blindgps.listeners.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
+import com.example.blindgps.utils.Methods;
 import com.example.blindgps.viewmodel.AppDatabase;
 import com.example.blindgps.viewmodel.RecentLocationsDAO;
 
@@ -48,6 +50,10 @@ public class RecentLocationsActivity extends AppCompatActivity {
         binding = ActivityRecentLocationsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (!Methods.isNetworkAvailable(RecentLocationsActivity.this)){
+            Toast.makeText(RecentLocationsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
+        }
+
         appDatabase = AppDatabase.getInstance(this);
         locationsDAO = appDatabase.locationsDAO();
         manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -57,6 +63,10 @@ public class RecentLocationsActivity extends AppCompatActivity {
     }
 
     private void LoadData(){
+        EditText searchEditText = (EditText) binding.searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.black));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.black));
+
         binding.imvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,7 +164,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
         FindLocation();
         ChooseDate();
-        SetFav();
 
         binding.ivRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,8 +201,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
     }
 
-    private void SetFav() {
-    }
 
     private void FindLocation(){
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -502,7 +509,18 @@ public class RecentLocationsActivity extends AppCompatActivity {
                         }
                     }
                 }
-                locationsDAO.setFav(locationList.get(position).getId(), isFav);
+                int count = 0;
+                for (RecentLocations l : locationList){
+                    if (l.getFav()){
+                        count++;
+                    }
+                }
+                if (count<=10){
+                    locationsDAO.setFav(locationList.get(position).getId(), isFav);
+                }
+                else{
+                    Toast.makeText(RecentLocationsActivity.this, "You can choose only 10 favorite locations", Toast.LENGTH_SHORT).show();
+                }
                 return null;
             }
             catch(Exception e){

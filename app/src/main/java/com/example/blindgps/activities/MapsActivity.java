@@ -35,6 +35,7 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.blindgps.R;
 import com.example.blindgps.model.RecentLocations;
+import com.example.blindgps.utils.Methods;
 import com.example.blindgps.viewmodel.AppDatabase;
 import com.example.blindgps.viewmodel.RecentLocationsDAO;
 import com.google.android.gms.common.ConnectionResult;
@@ -99,6 +100,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (!Methods.isNetworkAvailable(MapsActivity.this)){
+            Toast.makeText(MapsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription("My Notification");
@@ -122,15 +127,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         sharedPreferences = getSharedPreferences("Location_History", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        MapsActivity.Load_Data load_data = new MapsActivity.Load_Data();
-        load_data.execute();
+        //MapsActivity.Load_Data load_data = new MapsActivity.Load_Data();
+        //load_data.execute();
 
         ItemClick();
 
         setUpNotification();
-
-
-
 
     }
 
@@ -243,7 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void run() {
                     //CMD
-                    Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -581,7 +583,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             catch(ActivityNotFoundException innerEx)
             {
-                Toast.makeText(this, "Please install a maps application", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Please install a Google Maps application", Toast.LENGTH_LONG).show();
             }
         }
     }

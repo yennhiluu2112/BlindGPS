@@ -28,7 +28,7 @@
             android:background="#c42b2b"
             app:layout_constraintHeight_percent="1"
             app:layout_constraintWidth_percent="0.2"
-            app:layout_constraintDimensionRatio="10:10"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -93,11 +93,11 @@
                 app:layout_constraintBottom_toTopOf="@+id/tv_time"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.025"
+                app:layout_constraintHeight_percent="0.024"
                 app:layout_constraintHorizontal_bias="0.35"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="0.995" />
 
 
 
