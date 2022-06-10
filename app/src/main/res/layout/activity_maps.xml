@@ -108,10 +108,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_back"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="0dp"
         android:layout_height="0dp"
         map:layout_constraintHeight_percent="0.2"
+        map:layout_constraintDimensionRatio="2:1"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
@@ -151,7 +152,7 @@
             android:id="@+id/tv_time_count"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:autoSizeMaxTextSize="22sp"
+            android:autoSizeMaxTextSize="23sp"
             android:autoSizeMinTextSize="17sp"
             android:autoSizeStepGranularity="2sp"
             android:autoSizeTextType="uniform"
@@ -163,14 +164,14 @@
             map:layout_constraintHeight_percent="0.15"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="0.42" />
+            map:layout_constraintVertical_bias="0.43" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_back"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginLeft="5dp"
-            android:autoSizeMaxTextSize="25sp"
+            android:autoSizeMaxTextSize="22sp"
             android:autoSizeMinTextSize="15sp"
             android:autoSizeStepGranularity="2sp"
             android:autoSizeTextType="uniform"
@@ -179,7 +180,7 @@
             android:textColor="@color/white"
             map:layout_constraintBottom_toBottomOf="@id/imv_bg"
             map:layout_constraintEnd_toEndOf="@id/imv_bg"
-            map:layout_constraintHeight_percent="0.32"
+            map:layout_constraintHeight_percent="0.26"
             map:layout_constraintStart_toStartOf="@+id/imv_bg"
             map:layout_constraintTop_toTopOf="@id/imv_bg"
             map:layout_constraintVertical_bias="0.89"

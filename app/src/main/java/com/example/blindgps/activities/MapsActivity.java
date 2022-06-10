@@ -188,6 +188,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(MapsActivity.this, new String[]{ Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
         }
         else{
+            mMap.setMyLocationEnabled(true);
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
             criteria = new Criteria();
@@ -368,6 +369,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
         if (getIntent()!=null){
             Bundle extras = getIntent().getExtras();
             if (extras!=null) {
