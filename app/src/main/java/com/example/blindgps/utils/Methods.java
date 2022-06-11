@@ -11,15 +11,16 @@ public class Methods {
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         if (connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected()){
-            try {
-                InetAddress address = InetAddress.getByName("www.google.com");
-                if (address.equals("")){
-                    return false;
-                }
-                else return true;
-            } catch (UnknownHostException e) {
-                return false;
-            }
+//            try {
+//                InetAddress address = InetAddress.getByName("www.google.com");
+//                if (address.equals("")){
+//                    return false;
+//                }
+//                else return true;
+//            } catch (UnknownHostException e) {
+//                return false;
+//            }
+            return true;
         }
         else{
             return false;

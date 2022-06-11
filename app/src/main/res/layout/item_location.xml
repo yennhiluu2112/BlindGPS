@@ -69,35 +69,31 @@
 
             <TextView
                 android:id="@+id/tv_name"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:autoSizeMaxTextSize="16sp"
-                android:autoSizeMinTextSize="15sp"
-                android:autoSizeStepGranularity="2sp"
-                android:autoSizeTextType="uniform"
-                android:gravity="center_vertical"
-                android:text="Location name"
-                android:background="@null"
+                android:text="name"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toTopOf="@+id/tv_time"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_percent="0.5" />
 
             <ImageView
                 android:id="@+id/iv_Fav"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:src="@drawable/ic_no_fav"
-                app:layout_constraintBottom_toTopOf="@+id/tv_time"
+                android:src="@drawable/ic_fav"
+                android:visibility="gone"
+                android:layout_marginLeft="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_name"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.024"
-                app:layout_constraintHorizontal_bias="0.35"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.995" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/tv_name"
+                app:layout_constraintTop_toTopOf="@+id/tv_name"
+                app:layout_constraintWidth_percent="0.06" />
 
 
 

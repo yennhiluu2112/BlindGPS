@@ -34,6 +34,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.blindgps.R;
+import com.example.blindgps.listeners.ExecuteQueryListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.utils.Methods;
 import com.example.blindgps.viewmodel.AppDatabase;
@@ -127,8 +128,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         sharedPreferences = getSharedPreferences("Location_History", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        //MapsActivity.Load_Data load_data = new MapsActivity.Load_Data();
-        //load_data.execute();
+        MapsActivity.Load_Data load_data = new MapsActivity.Load_Data();
+        load_data.execute();
 
         ItemClick();
 
@@ -188,12 +189,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(MapsActivity.this, new String[]{ Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
         }
         else{
-            mMap.setMyLocationEnabled(true);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
-            criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-            provider = String.valueOf(locationManager.getBestProvider(criteria, true));
+            //mMap.setMyLocationEnabled(true);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            //criteria = new Criteria();
+            //criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            //provider = String.valueOf(locationManager.getBestProvider(criteria, true));
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if(location!=null){
                 la1 = location.getLatitude();
@@ -227,8 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ConnectSocket(){
         try {
 //            mSocket = IO.socket("http://192.168.1.20:5000");
-
-            mSocket = IO.socket("http://172.20.10.2:5000");
+            mSocket = IO.socket("http://192.168.1.82:5000");
             mSocket.on("server-send-data", onRetrieveData);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
             mSocket.emit("client-send-data", "Lap trinh android");
@@ -246,7 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void run() {
                     //CMD
-                    //Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -430,9 +429,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onRoutingFailure(RouteException e) {
-//        View view = findViewById(android.R.id.content);
-//        Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
-//        e.toString();
+        View view = findViewById(android.R.id.content);
+        Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+        e.toString();
         binding.btnOutDirection.setVisibility(View.GONE);
         Toast.makeText(MapsActivity.this, "Cannot get directions. Please choose Google Maps.", Toast.LENGTH_LONG).show();
     }
@@ -555,7 +554,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                    marker_1.setVisible(true);
 //                    marker_2.setVisible(true);
                     marker_.remove();
+                }
+            });
 
+            if (locations.getFav()){
+                binding.ivFav.setImageResource(R.drawable.ic_fav);
+            }
+            else{
+                binding.ivFav.setImageResource(R.drawable.ic_no_fav);
+            }
+
+            binding.ivFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (locations.getFav())
+                    {
+                        locations.setFav(false);
+                        binding.ivFav.setImageResource(R.drawable.ic_no_fav);
+                    }
+                    else{
+                        locations.setFav(true);
+                        binding.ivFav.setImageResource(R.drawable.ic_fav);
+                    }
+
+                    MapsActivity.Set_Fav set_fav = new MapsActivity.Set_Fav(locations, new ExecuteQueryListener(){
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void onEnd() {
+                            MapsActivity.Load_Data load_data = new MapsActivity.Load_Data();
+                            load_data.execute();
+                        }
+                    });
+                    set_fav.execute();
                 }
             });
         }
@@ -590,6 +624,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
     class Load_Data extends AsyncTask<Void,Void,Void> {
 
         @Override
@@ -598,11 +633,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationsArrayList.clear();
             }
 
-//            RecentLocations location1 = new RecentLocations( "108.214164","16.034689","location1", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()));
-//            RecentLocations location2 = new RecentLocations("108.211494","16.037497",  "location2", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()));
-//            RecentLocations location3 = new RecentLocations( "108.216224","16.037580", "location3", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()));
-//            RecentLocations location4 = new RecentLocations( "108.221027","16.040322", "location4", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()));
-//            RecentLocations location5 = new RecentLocations( "108.217725", "16.036118","location5", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()));
+//            RecentLocations location1 = new RecentLocations( "108.214164","16.034689","location1", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()), false);
+//            RecentLocations location2 = new RecentLocations("108.211494","16.037497",  "location2", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location3 = new RecentLocations( "108.216224","16.037580", "location3", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location4 = new RecentLocations( "108.221027","16.040322", "location4", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location5 = new RecentLocations( "108.217725", "16.036118","location5", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
 //            locationsDAO.insert(location1, location2, location3, location4, location5);
 
             locationsArrayList.addAll(locationsDAO.getAllLocations());
@@ -635,4 +670,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
+    class Set_Fav extends AsyncTask<Void, Void, Void>{
+        RecentLocations locations;
+        ExecuteQueryListener listener;
+        public Set_Fav(RecentLocations locations, ExecuteQueryListener listener) {
+            this.locations = locations;
+            this.listener = listener;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                int count = 0;
+                for (RecentLocations l : locationsArrayList){
+                    if (l.getFav()){
+                        count++;
+                    }
+                }
+                if (count<=10){
+                    locationsDAO.update(locations);
+                }
+                else{
+                    Toast.makeText(MapsActivity.this, "You can choose only 10 favorite locations", Toast.LENGTH_SHORT).show();
+                }
+                return null;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            listener.onEnd();
+        }
+    }
+
 }

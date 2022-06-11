@@ -63,9 +63,15 @@ public class RecentLocationsActivity extends AppCompatActivity {
     }
 
     private void LoadData(){
-        EditText searchEditText = (EditText) binding.searchView.findViewById(androidx.appcompat.R.id.search_src_text);
-        searchEditText.setTextColor(getResources().getColor(R.color.black));
-        searchEditText.setHintTextColor(getResources().getColor(R.color.black));
+        try{
+            EditText searchEditText = (EditText) binding.searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+            searchEditText.setTextColor(getResources().getColor(R.color.black));
+            searchEditText.setHintTextColor(getResources().getColor(R.color.black));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
 
         binding.imvBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,23 +140,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
                 });
                 delete_data.execute();
 
-            }
-
-            @Override
-            public void onFav(int position, boolean isFav) {
-                RecentLocationsActivity.Set_Fav set_fav = new RecentLocationsActivity.Set_Fav(position, isFav, new ExecuteQueryListener(){
-                    @Override
-                    public void onStart() {
-
-                    }
-
-                    @Override
-                    public void onEnd() {
-                        RecentLocationsActivity.Load_Data load_data = new RecentLocationsActivity.Load_Data();
-                        load_data.execute();
-                    }
-                });
-                set_fav.execute();
             }
 
             @Override
@@ -467,60 +456,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
                     }
                 }
 
-                return null;
-            }
-            catch(Exception e){
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            super.onPostExecute(unused);
-            listener.onEnd();
-        }
-    }
-
-
-    class Set_Fav extends AsyncTask<Void, Void, Void>{
-        int position;
-        boolean isFav;
-        ExecuteQueryListener listener;
-        public Set_Fav(int position, boolean isFav, ExecuteQueryListener listener) {
-            this.isFav = isFav;
-            this.position = position;
-            this.listener = listener;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try{
-                if (!isFirst){
-                    RecentLocations location_ = locationListByDate.get(position) ;
-                    for (int i=0; i< locationList.size(); i++) {
-                        if (location_.getLatitude() == locationList.get(i).getLatitude() && location_.getLongitude() == locationList.get(i).getLongitude()){
-                            this.position = i;
-                        }
-                    }
-                }
-                int count = 0;
-                for (RecentLocations l : locationList){
-                    if (l.getFav()){
-                        count++;
-                    }
-                }
-                if (count<=10){
-                    locationsDAO.setFav(locationList.get(position).getId(), isFav);
-                }
-                else{
-                    Toast.makeText(RecentLocationsActivity.this, "You can choose only 10 favorite locations", Toast.LENGTH_SHORT).show();
-                }
                 return null;
             }
             catch(Exception e){

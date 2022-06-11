@@ -22,9 +22,6 @@ public interface RecentLocationsDAO {
     @Query("UPDATE recent_locations SET location_name = :name WHERE latitude = :latitude AND longitude = :longitude")
     public void updateName(String latitude, String longitude, String name);
 
-    @Query("UPDATE recent_locations SET isFav = :isFav WHERE id = :id")
-    public void setFav(int id, boolean isFav);
-
     @Query("SELECT * FROM recent_locations")
     public List<RecentLocations> getAllLocations();
 

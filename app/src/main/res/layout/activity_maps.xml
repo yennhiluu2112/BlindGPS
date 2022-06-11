@@ -13,9 +13,9 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activities.MapsActivity"
-        tools:layout_editor_absoluteX="48dp"
-        tools:layout_editor_absoluteY="-139dp" />
+        tools:context=".activities.MapsActivity" />
+
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_out_direction"
@@ -108,83 +108,115 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_back"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        map:layout_constraintHeight_percent="0.2"
-        map:layout_constraintDimensionRatio="2:1"
+        map:layout_constraintHeight_percent="0.25"
+        map:layout_constraintDimensionRatio="15:10"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent"
         map:layout_constraintVertical_bias="1.0">
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintHeight_percent="0.9"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent"
+            map:layout_constraintVertical_bias="1.0">
+
+            <ImageView
+                android:id="@+id/imv_bg"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_iv"
+                map:layout_constraintBottom_toBottomOf="parent"
+                map:layout_constraintEnd_toEndOf="parent"
+                map:layout_constraintStart_toStartOf="parent"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@id/tv_time"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:autoSizeMaxTextSize="25sp"
+                android:autoSizeMinTextSize="17sp"
+                android:autoSizeStepGranularity="2sp"
+                android:autoSizeTextType="uniform"
+                android:gravity="center_horizontal"
+                android:text="Time"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                map:layout_constraintBottom_toBottomOf="parent"
+                map:layout_constraintEnd_toEndOf="parent"
+                map:layout_constraintHeight_percent="0.2"
+                map:layout_constraintStart_toStartOf="parent"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintVertical_bias="0.12" />
+
+            <TextView
+                android:id="@+id/tv_time_count"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:autoSizeMaxTextSize="23sp"
+                android:autoSizeMinTextSize="17sp"
+                android:autoSizeStepGranularity="2sp"
+                android:autoSizeTextType="uniform"
+                android:gravity="center_horizontal"
+                android:text="Time Count"
+                android:textColor="@color/black"
+                map:layout_constraintBottom_toBottomOf="parent"
+                map:layout_constraintEnd_toEndOf="parent"
+                map:layout_constraintHeight_percent="0.15"
+                map:layout_constraintStart_toStartOf="parent"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintVertical_bias="0.43" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_back"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginLeft="5dp"
+                android:autoSizeMaxTextSize="22sp"
+                android:autoSizeMinTextSize="15sp"
+                android:autoSizeStepGranularity="2sp"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/bg_button"
+                android:text="BACK"
+                android:textColor="@color/white"
+                map:layout_constraintBottom_toBottomOf="@id/imv_bg"
+                map:layout_constraintEnd_toEndOf="@id/imv_bg"
+                map:layout_constraintHeight_percent="0.26"
+                map:layout_constraintStart_toStartOf="@+id/imv_bg"
+                map:layout_constraintTop_toTopOf="@id/imv_bg"
+                map:layout_constraintVertical_bias="0.89"
+                map:layout_constraintWidth_percent="0.3" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ImageView
-            android:id="@+id/imv_bg"
+            android:id="@+id/iv_Fav"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/bg_iv"
+            android:background="@drawable/bg_fav"
+            android:padding="10dp"
+            android:src="@drawable/ic_no_fav"
             map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintDimensionRatio="1:1"
             map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@id/tv_time"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:autoSizeMaxTextSize="25sp"
-            android:autoSizeMinTextSize="20sp"
-            android:autoSizeStepGranularity="2sp"
-            android:autoSizeTextType="uniform"
-            android:gravity="center_horizontal"
-            android:text="Time"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            map:layout_constraintBottom_toBottomOf="parent"
-            map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintHeight_percent="0.2"
+            map:layout_constraintHeight_percent="0.25"
+            map:layout_constraintHorizontal_bias="1.0"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="0.120000005" />
+            map:layout_constraintVertical_bias="0.07999998" />
 
-        <TextView
-            android:id="@+id/tv_time_count"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:autoSizeMaxTextSize="23sp"
-            android:autoSizeMinTextSize="17sp"
-            android:autoSizeStepGranularity="2sp"
-            android:autoSizeTextType="uniform"
-            android:gravity="center_horizontal"
-            android:text="Time Count"
-            android:textColor="@color/black"
-            map:layout_constraintBottom_toBottomOf="parent"
-            map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintHeight_percent="0.15"
-            map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="0.43" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_back"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:autoSizeMaxTextSize="22sp"
-            android:autoSizeMinTextSize="15sp"
-            android:autoSizeStepGranularity="2sp"
-            android:autoSizeTextType="uniform"
-            android:background="@drawable/bg_button"
-            android:text="BACK"
-            android:textColor="@color/white"
-            map:layout_constraintBottom_toBottomOf="@id/imv_bg"
-            map:layout_constraintEnd_toEndOf="@id/imv_bg"
-            map:layout_constraintHeight_percent="0.26"
-            map:layout_constraintStart_toStartOf="@+id/imv_bg"
-            map:layout_constraintTop_toTopOf="@id/imv_bg"
-            map:layout_constraintVertical_bias="0.89"
-            map:layout_constraintWidth_percent="0.3" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -78,32 +78,15 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
 
             if (locations.get(position).getFav()){
                 holder.iv_fav.setImageResource(R.drawable.ic_fav);
+                holder.iv_fav.setVisibility(View.VISIBLE);
             }
             else{
-                holder.iv_fav.setImageResource(R.drawable.ic_no_fav);
+                holder.iv_fav.setVisibility(View.GONE);
             }
 
             holder.tv_name.setText(locations.get(position).getLocation_name());
             holder.tv_time.setText(locations.get(position).getTime());
             holder.swipeRevealLayout.setLayoutParams(params);
-
-            holder.iv_fav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    boolean isFav;
-                    if (locations.get(holder.getAdapterPosition()).getFav())
-                    {
-                        isFav = false;
-                        holder.iv_fav.setImageResource(R.drawable.ic_no_fav);
-                    }
-                    else{
-                        isFav = true;
-                        holder.iv_fav.setImageResource(R.drawable.ic_fav);
-                    }
-
-                    listener.onFav(holder.getAdapterPosition(), isFav);
-                }
-            });
 
         }
         catch (Exception e){
@@ -173,6 +156,8 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
         Button btn_cancel = view1.findViewById(R.id.btn_back);
         EditText edt_name = view1.findViewById(R.id.edt_name);
 
+        edt_name.setText(locations.get(position).getLocation_name());
+
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -214,8 +199,8 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
 
         SwipeRevealLayout swipeRevealLayout;
         ConstraintLayout layout, constraint1;
-        TextView tv_time, tv_delete;
-        EditText tv_name;
+        TextView tv_time, tv_delete,tv_name;
+
         ImageView iv_edit, iv_fav;
 
         public ViewHolder(@NonNull View itemView) {

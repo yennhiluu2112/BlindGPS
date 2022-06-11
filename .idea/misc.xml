@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/drawable-v24/bg_fav.xml" value="0.202" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2385" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/drawable/bg_button.xml" value="0.216" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/drawable/bg_dialog_change_name.xml" value="0.216" />
@@ -11,13 +12,13 @@
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/drawable/bg_main.xml" value="0.167" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2385" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/activity_main.xml" value="0.176" />
-        <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/activity_maps.xml" value="0.152" />
+        <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/activity_maps.xml" value="0.4" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/activity_recent_locations.xml" value="0.2" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/activity_splash.xml" value="0.136" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/dialog_change_name.xml" value="0.264" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/dialog_delete.xml" value="0.264" />
         <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/fragment_recent_locations.xml" value="0.264" />
-        <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/item_location.xml" value="0.4" />
+        <entry key="..\:/Nam3_HK2/PBL5/PBL5/BlindGPS/app/src/main/res/layout/item_location.xml" value="0.6" />
         <entry key="..\:/Nhi/PBL5/BlindGPS/app/src/main/res/layout/activity_main.xml" value="0.12771739130434784" />
         <entry key="..\:/Nhi/PBL5/BlindGPS/app/src/main/res/layout/activity_maps.xml" value="0.12771739130434784" />
       </map>
@@ -28,5 +29,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.16796875" />
+      </ProjectState>
+    </option>
   </component>
 </project>
