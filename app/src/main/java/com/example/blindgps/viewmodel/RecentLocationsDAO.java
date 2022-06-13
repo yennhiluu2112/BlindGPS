@@ -19,9 +19,6 @@ public interface RecentLocationsDAO {
     @Delete
     public void delete(RecentLocations... items);
 
-    @Query("UPDATE recent_locations SET location_name = :name WHERE latitude = :latitude AND longitude = :longitude")
-    public void updateName(String latitude, String longitude, String name);
-
     @Query("SELECT * FROM recent_locations")
     public List<RecentLocations> getAllLocations();
 

@@ -89,7 +89,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
         locationAdapter = new RecentLocationAdapter(layoutParams, locationList, new OnLocationItemClickListener() {
             @Override
             public void onEdit(int position, String name) {
-                RecentLocationsActivity.Update_Data update_data = new RecentLocationsActivity.Update_Data(name, locationList.get(position).getLatitude(), locationList.get(position).getLongitude(), new ExecuteQueryListener() {
+                RecentLocationsActivity.Update_Data update_data = new RecentLocationsActivity.Update_Data(name, position, new ExecuteQueryListener() {
                     @Override
                     public void onStart() {
 
@@ -375,12 +375,11 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
     class Update_Data extends AsyncTask<Void, Void, Void>{
         String name_new;
-        String latitude, longitude;
+        int position;
         ExecuteQueryListener listener;
-        public Update_Data(String name_new, String la, String lo, ExecuteQueryListener listener) {
+        public Update_Data(String name_new, int position, ExecuteQueryListener listener) {
             this.name_new = name_new;
-            this.latitude = la;
-            this.longitude = lo;
+            this.position = position;
             this.listener = listener;
         }
 
@@ -392,7 +391,30 @@ public class RecentLocationsActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             try{
-                locationsDAO.updateName(latitude, longitude, name_new);
+                if (!isFirst){
+                    RecentLocations location_ = locationListByDate.get(position) ;
+                    for (int i=0; i< locationList.size(); i++) {
+                        if (location_.getLatitude() == locationList.get(i).getLatitude() && location_.getLongitude() == locationList.get(i).getLongitude()){
+                            this.position = i;
+                        }
+                    }
+                }
+                RecentLocations location = locationList.get(position);
+                double la_from = Double.parseDouble(location.getLatitude())-0.00005;
+                double la_to = Double.parseDouble(location.getLatitude())+0.00005;
+                double lo_from = Double.parseDouble(location.getLongitude())-0.00005;
+                double lo_to = Double.parseDouble(location.getLongitude())+0.00005;
+
+
+                for (int i=0; i< locationList.size(); i++) {
+                    double la_d = Double.parseDouble(locationList.get(i).getLatitude());
+                    double lo_d = Double.parseDouble(locationList.get(i).getLongitude());
+                    if (la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d) {
+                        locationList.get(i).setLocation_name(name_new);
+                        locationsDAO.update(locationList.get(i));
+                    }
+
+                }
                 return null;
             }
             catch(Exception e){

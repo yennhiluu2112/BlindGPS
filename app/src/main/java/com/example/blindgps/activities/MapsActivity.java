@@ -1,6 +1,7 @@
 package com.example.blindgps.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -17,6 +18,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,7 +27,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.directions.route.AbstractRouting;
@@ -64,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -227,7 +233,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ConnectSocket(){
         try {
 //            mSocket = IO.socket("http://192.168.1.20:5000");
-            mSocket = IO.socket("http://192.168.1.82:5000");
+            mSocket = IO.socket("http://172.20.10.3:5000");
             mSocket.on("server-send-data", onRetrieveData);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
             mSocket.emit("client-send-data", "Lap trinh android");
@@ -245,7 +251,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void run() {
                     //CMD
-                    Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -388,24 +394,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (l.getFav()){
                 String la = l.getLatitude();
                 String lo = l.getLongitude();
-                if (lo2!=null && la2!=null && la!=la2 && lo!=lo2 && lo1!=0 && la1!=0 && String.valueOf(lo1)!=lo && String.valueOf(la1)!=la)
-                {
-                    LatLng latLng = new LatLng(Double.parseDouble(la), Double.parseDouble(lo));
-                    MarkerOptions marker = new MarkerOptions()
-                            .position(latLng)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                            .title(l.getLocation_name());
-                    mMap.addMarker(marker);
+                double la_from = Double.parseDouble(l.getLatitude())-0.00005;
+                double la_to = Double.parseDouble(l.getLatitude())+0.00005;
+                double lo_from = Double.parseDouble(l.getLongitude())-0.00005;
+                double lo_to = Double.parseDouble(l.getLongitude())+0.00005;
+                if (la2!=null && lo2!=null){
+                    double la_d = Double.parseDouble(la2);
+                    double lo_d = Double.parseDouble(lo2);
 
-                    CircleOptions circleOptions = new CircleOptions()
-                            .center(latLng)
-                            .radius(100)
-                            .strokeWidth(3f)
-                            .strokeColor(Color.rgb(255,165,0))
-                            .fillColor(Color.argb(70,255,165,0));
-                    mMap.addCircle(circleOptions);
+                    if (!(la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d))
+                    {
+                        LatLng latLng = new LatLng(Double.parseDouble(la), Double.parseDouble(lo));
+                        MarkerOptions marker = new MarkerOptions()
+                                .position(latLng)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                                .title(l.getLocation_name());
+                        mMap.addMarker(marker);
+
+                        CircleOptions circleOptions = new CircleOptions()
+                                .center(latLng)
+                                .radius(100)
+                                .strokeWidth(3f)
+                                .strokeColor(Color.rgb(255,165,0))
+                                .fillColor(Color.argb(70,255,165,0));
+                        mMap.addCircle(circleOptions);
+                    }
                 }
-
             }
         }
     }
@@ -430,7 +444,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onRoutingFailure(RouteException e) {
         View view = findViewById(android.R.id.content);
-        Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
         e.toString();
         binding.btnOutDirection.setVisibility(View.GONE);
         Toast.makeText(MapsActivity.this, "Cannot get directions. Please choose Google Maps.", Toast.LENGTH_LONG).show();
@@ -546,6 +560,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             binding.tvTime.setText(locations.getTime());
             binding.tvTimeCount.setText(time_count);
 
+            Edit_Name(locations);
+
             binding.btnBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -592,11 +608,81 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     set_fav.execute();
                 }
             });
+
+
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
+
+    private void Edit_Name(RecentLocations locations){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        View view1 = LayoutInflater.from(MapsActivity.this).inflate(R.layout.dialog_change_name, null,false);
+        builder.setView(view1);
+        builder.setCancelable(false);
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button btn_ok = view1.findViewById(R.id.btn_ok);
+        Button btn_cancel = view1.findViewById(R.id.btn_back);
+        EditText edt_name = view1.findViewById(R.id.edt_name);
+
+        binding.tvName.setText(locations.getLocation_name());
+
+        edt_name.setText(locations.getLocation_name());
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        binding.ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.show();
+            }
+        });
+
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    String name = edt_name.getText().toString();
+                    if(name.length()!=0){
+                        MapsActivity.Update_Data update_data = new MapsActivity.Update_Data(name, locations, new ExecuteQueryListener() {
+                            @Override
+                            public void onStart() {
+
+                            }
+
+                            @Override
+                            public void onEnd() {
+                                binding.tvName.setText(name);
+                                MapsActivity.Load_Data load_data = new MapsActivity.Load_Data();
+                                load_data.execute();
+
+                            }
+                        });
+                        update_data.execute();
+                        alertDialog.dismiss();
+                    }
+                    else{
+                        Toast.makeText(MapsActivity.this, "Please re enter", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MapsActivity.this, "\"Please re enter", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
     private void Open_Google_Map(String latitude, String longitude){
         //String uri = "http://maps.google.com/maps/dir/?api=1&destination=" + latitude + "%2C-" + longitude + " (" + "Your partner is here" + ")";
@@ -699,6 +785,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else{
                     Toast.makeText(MapsActivity.this, "You can choose only 10 favorite locations", Toast.LENGTH_SHORT).show();
                 }
+                return null;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            listener.onEnd();
+        }
+    }
+
+    class Update_Data extends AsyncTask<Void, Void, Void>{
+        String name_new;
+        RecentLocations locations;
+        ExecuteQueryListener listener;
+        public Update_Data(String name_new, RecentLocations locations, ExecuteQueryListener listener) {
+            this.name_new = name_new;
+            this.locations = locations;
+            this.listener = listener;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                double la_from = Double.parseDouble(locations.getLatitude())-0.00005;
+                double la_to = Double.parseDouble(locations.getLatitude())+0.00005;
+                double lo_from = Double.parseDouble(locations.getLongitude())-0.00005;
+                double lo_to = Double.parseDouble(locations.getLongitude())+0.00005;
+
+
+                for (int i=0; i< locationsArrayList.size(); i++) {
+                    double la_d = Double.parseDouble(locationsArrayList.get(i).getLatitude());
+                    double lo_d = Double.parseDouble(locationsArrayList.get(i).getLongitude());
+                    if (la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d) {
+                        locationsArrayList.get(i).setLocation_name(name_new);
+                        locationsDAO.update(locationsArrayList.get(i));
+                    }
+                }
+
                 return null;
             }
             catch(Exception e){
