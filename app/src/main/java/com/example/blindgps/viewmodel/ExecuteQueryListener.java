@@ -1,4 +1,4 @@
-package com.example.blindgps.listeners;
+package com.example.blindgps.viewmodel;
 
 public interface ExecuteQueryListener {
     public void onStart();

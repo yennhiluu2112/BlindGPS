@@ -16,7 +16,7 @@
         android:theme="@style/Theme.BlindGPS"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activities.RecentLocationsActivity"
+            android:name=".view.RecentLocationsActivity"
             android:exported="false" />
 
         <meta-data
@@ -24,13 +24,13 @@
             android:value="@string/API_KEY" />
 
         <activity
-            android:name=".activities.MapsActivity"
+            android:name=".view.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps">
 
         </activity>
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".view.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

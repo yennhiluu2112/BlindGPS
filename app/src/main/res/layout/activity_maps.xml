@@ -19,7 +19,7 @@
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent"
         map:layout_constraintVertical_bias="0.0"
-        tools:context=".activities.MapsActivity" />
+        tools:context=".view.MapsActivity" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_out_direction"

@@ -1,4 +1,4 @@
-package com.example.blindgps.adapters;
+package com.example.blindgps.view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.example.blindgps.R;
-import com.example.blindgps.listeners.OnLocationItemClickListener;
+import com.example.blindgps.viewmodel.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.viewmodel.AppDatabase;
 import com.example.blindgps.viewmodel.RecentLocationsDAO;

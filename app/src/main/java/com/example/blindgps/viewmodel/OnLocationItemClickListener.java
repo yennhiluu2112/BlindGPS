@@ -1,6 +1,4 @@
-package com.example.blindgps.listeners;
-
-import com.example.blindgps.activities.RecentLocationsActivity;
+package com.example.blindgps.viewmodel;
 
 public interface OnLocationItemClickListener {
     public void onEdit(int position, String name);

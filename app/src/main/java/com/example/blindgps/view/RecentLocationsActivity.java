@@ -1,4 +1,4 @@
-package com.example.blindgps.activities;
+package com.example.blindgps.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -19,10 +19,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.blindgps.R;
-import com.example.blindgps.adapters.RecentLocationAdapter;
-import com.example.blindgps.databinding.ActivityRecentLocationsBinding;
-import com.example.blindgps.listeners.ExecuteQueryListener;
-import com.example.blindgps.listeners.OnLocationItemClickListener;
+import com.example.blindgps.viewmodel.ExecuteQueryListener;
+import com.example.blindgps.viewmodel.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.utils.Methods;
 import com.example.blindgps.viewmodel.AppDatabase;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class RecentLocationsActivity extends AppCompatActivity {
     private ActivityRecentLocationsBinding binding;

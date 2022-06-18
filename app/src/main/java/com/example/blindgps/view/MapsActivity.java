@@ -1,4 +1,4 @@
-package com.example.blindgps.activities;
+package com.example.blindgps.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -39,7 +39,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.blindgps.R;
-import com.example.blindgps.listeners.ExecuteQueryListener;
+import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.utils.Methods;
 import com.example.blindgps.viewmodel.AppDatabase;
@@ -57,7 +57,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.example.blindgps.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -69,7 +68,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.socket.client.IO;

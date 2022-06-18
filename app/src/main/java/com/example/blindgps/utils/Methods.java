@@ -40,16 +40,41 @@ public class Methods {
                             return diffInMinutes + " minutes";
                         }
                     } else {
-                        return diffInHour + " hours";
+                        if (diffInMinutes<60){
+                            return diffInHour + " hours" + diffInMinutes + "minutes";
+                        }
+                        else{
+                            return diffInHour + " hours";
+                        }
+
                     }
                 } else {
-                    return diffInDay + " days";
+                    if (diffInHour<24){
+                        return diffInDay + " days" + diffInHour + " hours";
+                    }
+                    else{
+                        return diffInDay + " days";
+                    }
                 }
+
             } else {
-                return diffInMonth + " months";
+                if (diffInDay<30){
+                    return diffInMonth + " months" + diffInDay + " days";
+
+                }else{
+                    return diffInMonth + " months";
+                }
+
             }
         } else {
-            return diffInYear + " years";
+            if (diffInMonth<12){
+                return diffInYear + " years" + diffInMonth + " months";
+            }
+            else{
+                return diffInYear + " years";
+            }
+
+
         }
     }
 

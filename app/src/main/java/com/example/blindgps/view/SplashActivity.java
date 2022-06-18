@@ -1,4 +1,4 @@
-package com.example.blindgps.activities;
+package com.example.blindgps.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
-import com.example.blindgps.databinding.ActivitySplashBinding;
 import com.github.ybq.android.spinkit.style.Wave;
 
 
