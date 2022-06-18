@@ -195,7 +195,7 @@
                 android:textStyle="bold"
                 map:layout_constraintBottom_toBottomOf="parent"
                 map:layout_constraintEnd_toEndOf="parent"
-                map:layout_constraintHeight_percent="0.15"
+                map:layout_constraintHeight_percent="0.13"
                 map:layout_constraintStart_toStartOf="parent"
                 map:layout_constraintTop_toTopOf="parent"
                 map:layout_constraintVertical_bias="0.38" />
@@ -213,10 +213,10 @@
                 android:textColor="@color/black"
                 map:layout_constraintBottom_toBottomOf="parent"
                 map:layout_constraintEnd_toEndOf="parent"
-                map:layout_constraintHeight_percent="0.15"
+                map:layout_constraintHeight_percent="0.13"
                 map:layout_constraintStart_toStartOf="parent"
                 map:layout_constraintTop_toTopOf="parent"
-                map:layout_constraintVertical_bias="0.6" />
+                map:layout_constraintVertical_bias="0.57" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_back"
@@ -235,7 +235,7 @@
                 map:layout_constraintHeight_percent="0.18"
                 map:layout_constraintStart_toStartOf="@+id/imv_bg"
                 map:layout_constraintTop_toTopOf="@id/imv_bg"
-                map:layout_constraintVertical_bias="0.96"
+                map:layout_constraintVertical_bias="0.92"
                 map:layout_constraintWidth_percent="0.3" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

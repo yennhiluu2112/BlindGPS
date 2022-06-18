@@ -585,10 +585,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             binding.btnBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(MapsActivity.this, RecentLocationsActivity.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(MapsActivity.this, RecentLocationsActivity.class);
+//                    startActivity(intent);
 //                    marker_1.setVisible(true);
 //                    marker_2.setVisible(true);
+                    onBackPressed();
                     marker_.remove();
                 }
             });
