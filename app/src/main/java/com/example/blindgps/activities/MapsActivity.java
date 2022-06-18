@@ -70,6 +70,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -214,6 +215,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 marker_1 = mMap.addMarker(marker1);
                 marker_1.setVisible(true);
 
+
                 CircleOptions circleOptions = new CircleOptions()
                         .center(latLng1)
                         .radius(100)
@@ -233,7 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ConnectSocket(){
         try {
 //            mSocket = IO.socket("http://192.168.1.20:5000");
-            mSocket = IO.socket("http://172.20.10.3:5000");
+            mSocket = IO.socket("http://172.20.10.6:5000");
             mSocket.on("server-send-data", onRetrieveData);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
             mSocket.emit("client-send-data", "Lap trinh android");
@@ -251,7 +253,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void run() {
                     //CMD
-                    //Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -284,6 +286,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .title(setMarkerName(la2, lo2));
                         marker_2 = mMap.addMarker(marker2);
                         marker_2.setVisible(true);
+                        marker_2.showInfoWindow();
 
                         CircleOptions circleOptions = new CircleOptions()
                                 .center(latLng2)
@@ -333,29 +336,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else{
             RecentLocations last_location = locationsArrayList.get(locationsArrayList.size()-1);
-            double la_from = Double.parseDouble(last_location.getLatitude())-0.00005;
-            double la_to = Double.parseDouble(last_location.getLatitude())+0.00005;
-            double lo_from = Double.parseDouble(last_location.getLongitude())-0.00005;
-            double lo_to = Double.parseDouble(last_location.getLongitude())+0.00005;
-            double la2_d = Double.parseDouble(la2);
-            double lo2_d = Double.parseDouble(lo2);
-            String name ="";
+            try{
+                Date currentDate = new Date();
+                Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(last_location.getTime());
+                long diffInTime = currentDate.getTime() - date.getTime();
+                long diffInHour = TimeUnit.MILLISECONDS.toHours(diffInTime);
+                double la_from = Double.parseDouble(last_location.getLatitude())-0.00005;
+                double la_to = Double.parseDouble(last_location.getLatitude())+0.00005;
+                double lo_from = Double.parseDouble(last_location.getLongitude())-0.00005;
+                double lo_to = Double.parseDouble(last_location.getLongitude())+0.00005;
+                double la2_d = Double.parseDouble(la2);
+                double lo2_d = Double.parseDouble(lo2);
+                String name ="";
 
-            if (!(la_from<la2_d && la_to>la2_d && lo_from<lo2_d && lo_to>lo2_d)) {
-                for (RecentLocations l : locationsArrayList){
-                    double la_d = Double.parseDouble(l.getLatitude());
-                    double lo_d= Double.parseDouble(l.getLongitude());
-                    if (la_from>la_d && la_to<la_d && lo_from>lo_d && lo_to<lo_d){
-                        name = l.getLocation_name();
-                        break;
+                if (!(la_from<la2_d && la_to>la2_d && lo_from<lo2_d && lo_to>lo2_d)) {
+                    for (RecentLocations l : locationsArrayList){
+                        double la_d = Double.parseDouble(l.getLatitude());
+                        double lo_d= Double.parseDouble(l.getLongitude());
+                        if (la_from>la_d && la_to<la_d && lo_from>lo_d && lo_to<lo_d){
+                            name = l.getLocation_name();
+                            break;
+                        }
+                        else
+                            name = "New Location";
                     }
-                    else
-                        name = "New Location";
+                    MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
+                    insert_data.execute();
+                    sendNotification();
                 }
-                MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
-                insert_data.execute();
-                sendNotification();
+                else if (diffInHour>5){
+                    MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
+                    insert_data.execute();
+                    sendNotification();
+                }
             }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+
+
+
 
         }
     }
@@ -444,7 +464,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onRoutingFailure(RouteException e) {
         View view = findViewById(android.R.id.content);
-        //Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+        Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
         e.toString();
         binding.btnOutDirection.setVisibility(View.GONE);
         Toast.makeText(MapsActivity.this, "Cannot get directions. Please choose Google Maps.", Toast.LENGTH_LONG).show();

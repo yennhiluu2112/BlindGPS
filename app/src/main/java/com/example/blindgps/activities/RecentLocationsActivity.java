@@ -9,12 +9,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.blindgps.R;
@@ -110,7 +111,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
             public void onClick(int position) {
                 try{
                     Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(locationList.get(position).getTime());
-                    String time = getPastTimeString(date);
+                    String time = Methods.getPastTimeString(date);
                     Intent intent = new Intent(RecentLocationsActivity.this, MapsActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("from", "one");
@@ -192,38 +193,72 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
 
     private void FindLocation(){
-        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
+            public void onClick(View view) {
+                binding.edtSearch.setVisibility(View.VISIBLE);
+                binding.imvBackEdt.setVisibility(View.VISIBLE);
+                binding.imvBack.setVisibility(View.GONE);
+                binding.ivRefresh.setVisibility(View.GONE);
+                binding.bg.setVisibility(View.VISIBLE);
+                binding.constraint12.setVisibility(View.GONE);
+                binding.constraint13.setVisibility(View.GONE);
+                binding.edtSearch.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            @Override
-            public boolean onQueryTextChange(String find) {
-                ArrayList<RecentLocations> list_search = new ArrayList<RecentLocations>();
-                try{
-                    for (RecentLocations l : locationList) {
-                        if (l.getLocation_name().toLowerCase().contains(find)) {
-                            list_search.add(l);
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        ArrayList<RecentLocations> list_search = new ArrayList<RecentLocations>();
+                        try{
+                            String find = binding.edtSearch.getText().toString();
+                            for (RecentLocations l : locationList) {
+                                if (l.getLocation_name().toLowerCase().contains(find)) {
+                                    list_search.add(l);
+                                }
+                            }
+                            if(list_search.isEmpty()) {
+                                if (find.length() > 0){}
+                                //Toast.makeText(RecentLocationsActivity.this, "No Location Found", Toast.LENGTH_SHORT).show();
+                            } else {
+                                locationAdapter.loadListLocation(list_search);
+                                locationAdapter.notifyDataSetChanged();
+                            }
+                            if(find.length() == 0){
+                                locationAdapter.loadListLocation(locationList);
+                                locationAdapter.notifyDataSetChanged();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
                         }
                     }
-                    if(list_search.isEmpty()) {
-                        if (find.length() > 0){}
-                        //Toast.makeText(RecentLocationsActivity.this, "No Location Found", Toast.LENGTH_SHORT).show();
-                    } else {
-                        locationAdapter.loadListLocation(list_search);
-                        locationAdapter.notifyDataSetChanged();
-                    }
-                    if(find.length() == 0){
-                        locationAdapter.loadListLocation(locationList);
-                        locationAdapter.notifyDataSetChanged();
-                    }
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return false;
+                });
+            }
+        });
+
+        binding.imvBackEdt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.edtSearch.setVisibility(View.GONE);
+                binding.imvBackEdt.setVisibility(View.GONE);
+                binding.imvBack.setVisibility(View.VISIBLE);
+                binding.ivRefresh.setVisibility(View.VISIBLE);
+                binding.bg.setVisibility(View.GONE);
+                binding.constraint12.setVisibility(View.VISIBLE);
+                binding.constraint13.setVisibility(View.VISIBLE);
+                binding.edtSearch.setText("");
+                RecentLocationsActivity.Load_Data load_data = new RecentLocationsActivity.Load_Data();
+                load_data.execute();
+
             }
         });
     }
@@ -310,38 +345,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
     }
 
-    private String getPastTimeString(Date postDate) {
 
-        Date currentDate = new Date();
-        long diffInTime = currentDate.getTime() - postDate.getTime();
-        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInTime);
-        long diffInHour = TimeUnit.MILLISECONDS.toHours(diffInTime);
-        long diffInYear = TimeUnit.MILLISECONDS.toDays(diffInTime) / 365l;
-        long diffInMonth = TimeUnit.MILLISECONDS.toDays(diffInTime) / 30l;
-        long diffInDay = TimeUnit.MILLISECONDS.toDays(diffInTime);
-
-        if (diffInYear < 1) {
-            if (diffInMonth < 1) {
-                if (diffInDay < 1) {
-                    if (diffInHour < 1) {
-                        if (diffInMinutes < 1) {
-                            return "Just now";
-                        } else {
-                            return diffInMinutes + " minutes";
-                        }
-                    } else {
-                        return diffInHour + " hours";
-                    }
-                } else {
-                    return diffInDay + " days";
-                }
-            } else {
-                return diffInMonth + " months";
-            }
-        } else {
-            return diffInYear + " years";
-        }
-    }
 
     class Load_Data extends AsyncTask<Void, Void, Void> {
 
