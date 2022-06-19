@@ -1,24 +1,31 @@
 package com.example.blindgps.view;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.blindgps.R;
+import com.example.blindgps.databinding.ActivityRecentLocationsBinding;
 import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.viewmodel.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
@@ -61,16 +68,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
     }
 
     private void LoadData(){
-        try{
-            EditText searchEditText = (EditText) binding.searchView.findViewById(androidx.appcompat.R.id.search_src_text);
-            searchEditText.setTextColor(getResources().getColor(R.color.black));
-            searchEditText.setHintTextColor(getResources().getColor(R.color.black));
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-
         binding.imvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,6 +75,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         binding.progressCircular.setVisibility(View.VISIBLE);
         RecentLocationsActivity.Load_Data load_data = new RecentLocationsActivity.Load_Data();
         load_data.execute();
@@ -151,7 +149,11 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
         FindLocation();
         ChooseDate();
+        DeleteAllData();
+        RefreshData();
+    }
 
+    private void RefreshData(){
         binding.ivRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,8 +187,56 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
             }
         });
-
     }
+
+    private void DeleteAllData(){
+        binding.tvDeleteAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RecentLocationsActivity.this);
+                View view1 = LayoutInflater.from(RecentLocationsActivity.this).inflate(R.layout.dialog_delete_all_data, null,false);
+                builder.setView(view1);
+                builder.setCancelable(false);
+
+                final AlertDialog alertDialog = builder.create();
+                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                Button btn_ok = view1.findViewById(R.id.btn_ok);
+                Button btn_cancel = view1.findViewById(R.id.btn_cancel);
+
+                btn_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+
+                btn_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try{
+                            RecentLocationsActivity.Delete_All_Data load_data = new RecentLocationsActivity.Delete_All_Data(new ExecuteQueryListener() {
+                                @Override
+                                public void onStart() {
+
+                                }
+
+                                @Override
+                                public void onEnd() {
+                                    locationAdapter.notifyDataSetChanged();
+                                }
+                            });
+                            load_data.execute();
+                        }
+                        catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
 
 
     private void FindLocation(){
@@ -197,6 +247,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
                 binding.imvBackEdt.setVisibility(View.VISIBLE);
                 binding.imvBack.setVisibility(View.GONE);
                 binding.ivRefresh.setVisibility(View.GONE);
+                binding.tvDeleteAll.setVisibility(View.GONE);
                 binding.bg.setVisibility(View.VISIBLE);
                 binding.constraint12.setVisibility(View.GONE);
                 binding.constraint13.setVisibility(View.GONE);
@@ -250,6 +301,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
                 binding.imvBack.setVisibility(View.VISIBLE);
                 binding.ivRefresh.setVisibility(View.VISIBLE);
                 binding.bg.setVisibility(View.GONE);
+                binding.tvDeleteAll.setVisibility(View.VISIBLE);
                 binding.constraint12.setVisibility(View.VISIBLE);
                 binding.constraint13.setVisibility(View.VISIBLE);
                 binding.edtSearch.setText("");
@@ -360,8 +412,12 @@ public class RecentLocationsActivity extends AppCompatActivity {
 //            RecentLocations location5 = new RecentLocations("16.036118", "108.217725", "location5", String.valueOf((int) new Date().getTime()));
 //            locationsDAO.insert(location1, location2, location3, location4, location5);
             locationList.clear();
-            locationList.addAll(locationsDAO.getAllLocations());
-            Collections.reverse(locationList);
+            if (locationsDAO.getAllLocations()!=null){
+                locationList.addAll(locationsDAO.getAllLocations());
+                Collections.reverse(locationList);
+                binding.tvDeleteAll.setVisibility(View.VISIBLE);
+            }
+
 
             return null;
         }
@@ -479,6 +535,36 @@ public class RecentLocationsActivity extends AppCompatActivity {
                     }
                 }
 
+                return null;
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            listener.onEnd();
+        }
+    }
+
+    class Delete_All_Data extends AsyncTask<Void, Void, Void> {
+        ExecuteQueryListener listener;
+        public Delete_All_Data(ExecuteQueryListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                locationsDAO.deleteAll();
                 return null;
             }
             catch(Exception e){

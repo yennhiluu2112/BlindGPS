@@ -166,7 +166,7 @@
         app:layout_constraintTop_toBottomOf="@id/constraint12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/recycler_view"
+        app:layout_constraintBottom_toTopOf="@id/tv_delete_all"
         app:layout_constraintHeight_percent="0.047">
 
         <ImageView
@@ -219,8 +219,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.12" />
 
-
-
+    <TextView
+        android:id="@+id/tv_delete_all"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:autoSizeMaxTextSize="20sp"
+        android:autoSizeMinTextSize="15sp"
+        android:autoSizeStepGranularity="2sp"
+        app:layout_constraintHeight_percent="0.04"
+        android:autoSizeTextType="uniform"
+        android:text="Delete All"
+        android:textColor="#F10F22"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/constraint13"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/recycler_view"
+        android:visibility="gone"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -232,7 +250,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraint13" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_delete_all" />
 
     <ProgressBar
         android:id="@+id/progress_circular"
