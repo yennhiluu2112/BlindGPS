@@ -47,7 +47,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
     private LinearLayoutManager manager;
     private static ArrayList<RecentLocations> locationList, locationListByDate;
     private static String date_from, date_to;
-    private static Boolean isRotate=false, isFirst=true;
+    private static Boolean isRotate=false, isFirst=true, isOpen=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
         locationsDAO = appDatabase.locationsDAO();
         manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         locationList = new ArrayList<RecentLocations>();
+
         locationListByDate = new ArrayList<RecentLocations>();
         LoadData();
     }
@@ -109,7 +110,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
                     String time = Methods.getPastTimeString(date);
                     Intent intent = new Intent(RecentLocationsActivity.this, MapsActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString("from", "one");
                     bundle.putString("time", time);
                     bundle.putSerializable("location", locationList.get(position));
                     intent.putExtras(bundle);
@@ -149,7 +149,37 @@ public class RecentLocationsActivity extends AppCompatActivity {
 
         FindLocation();
         ChooseDate();
-        DeleteAllData();
+
+
+
+        binding.imvMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isOpen){
+                    binding.constraintMore.setVisibility(View.VISIBLE);
+                    binding.btnOpenFavorite.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(RecentLocationsActivity.this, FavoriteActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                    binding.btnDeleteAll.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DeleteAllData();
+                        }
+                    });
+                    isOpen=true;
+                }
+                else{
+                    binding.constraintMore.setVisibility(View.GONE);
+                    isOpen=false;
+                }
+
+
+            }
+        });
         RefreshData();
     }
 
@@ -190,51 +220,53 @@ public class RecentLocationsActivity extends AppCompatActivity {
     }
 
     private void DeleteAllData(){
-        binding.tvDeleteAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(RecentLocationsActivity.this);
-                View view1 = LayoutInflater.from(RecentLocationsActivity.this).inflate(R.layout.dialog_delete_all_data, null,false);
-                builder.setView(view1);
-                builder.setCancelable(false);
+        if (locationList.isEmpty()){
+            Toast.makeText(RecentLocationsActivity.this, "Nothing to delete", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(RecentLocationsActivity.this);
+            View view1 = LayoutInflater.from(RecentLocationsActivity.this).inflate(R.layout.dialog_delete_all_data, null,false);
+            builder.setView(view1);
+            builder.setCancelable(false);
 
-                final AlertDialog alertDialog = builder.create();
-                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                Button btn_ok = view1.findViewById(R.id.btn_ok);
-                Button btn_cancel = view1.findViewById(R.id.btn_cancel);
+            Button btn_ok = view1.findViewById(R.id.btn_ok);
+            Button btn_cancel = view1.findViewById(R.id.btn_cancel);
 
-                btn_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try{
+                        RecentLocationsActivity.Delete_All_Data load_data = new RecentLocationsActivity.Delete_All_Data(new ExecuteQueryListener() {
+                            @Override
+                            public void onStart() {
+
+                            }
+
+                            @Override
+                            public void onEnd() {
+                                locationAdapter.notifyDataSetChanged();
+                            }
+                        });
+                        load_data.execute();
                     }
-                });
-
-                btn_ok.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        try{
-                            RecentLocationsActivity.Delete_All_Data load_data = new RecentLocationsActivity.Delete_All_Data(new ExecuteQueryListener() {
-                                @Override
-                                public void onStart() {
-
-                                }
-
-                                @Override
-                                public void onEnd() {
-                                    locationAdapter.notifyDataSetChanged();
-                                }
-                            });
-                            load_data.execute();
-                        }
-                        catch(Exception e){
-                            e.printStackTrace();
-                        }
+                    catch(Exception e){
+                        e.printStackTrace();
                     }
-                });
-            }
-        });
+                }
+            });
+
+            alertDialog.show();
+        }
     }
 
 
@@ -247,7 +279,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
                 binding.imvBackEdt.setVisibility(View.VISIBLE);
                 binding.imvBack.setVisibility(View.GONE);
                 binding.ivRefresh.setVisibility(View.GONE);
-                binding.tvDeleteAll.setVisibility(View.GONE);
                 binding.bg.setVisibility(View.VISIBLE);
                 binding.constraint12.setVisibility(View.GONE);
                 binding.constraint13.setVisibility(View.GONE);
@@ -301,7 +332,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
                 binding.imvBack.setVisibility(View.VISIBLE);
                 binding.ivRefresh.setVisibility(View.VISIBLE);
                 binding.bg.setVisibility(View.GONE);
-                binding.tvDeleteAll.setVisibility(View.VISIBLE);
                 binding.constraint12.setVisibility(View.VISIBLE);
                 binding.constraint13.setVisibility(View.VISIBLE);
                 binding.edtSearch.setText("");
@@ -415,7 +445,6 @@ public class RecentLocationsActivity extends AppCompatActivity {
             if (locationsDAO.getAllLocations()!=null){
                 locationList.addAll(locationsDAO.getAllLocations());
                 Collections.reverse(locationList);
-                binding.tvDeleteAll.setVisibility(View.VISIBLE);
             }
 
 

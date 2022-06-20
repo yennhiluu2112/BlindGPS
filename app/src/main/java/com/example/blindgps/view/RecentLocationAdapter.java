@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.example.blindgps.R;
+import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.viewmodel.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.viewmodel.AppDatabase;
@@ -95,53 +96,94 @@ public class RecentLocationAdapter extends RecyclerView.Adapter<RecentLocationAd
     }
 
     private void Delete_Location(View v_delete, int position){
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View view1 = LayoutInflater.from(context).inflate(R.layout.dialog_delete, null,false);
-        builder.setView(view1);
-        builder.setCancelable(false);
+        if (context.getClass() ==  RecentLocationsActivity.class){
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            View view1 = LayoutInflater.from(context).inflate(R.layout.dialog_delete, null,false);
+            builder.setView(view1);
+            builder.setCancelable(false);
 
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Button btn_one = view1.findViewById(R.id.btn_one);
-        Button btn_all = view1.findViewById(R.id.btn_all);
-        TextView tv_cancel = view1.findViewById(R.id.tv_cancel);
+            Button btn_one = view1.findViewById(R.id.btn_one);
+            Button btn_all = view1.findViewById(R.id.btn_all);
+            TextView tv_cancel = view1.findViewById(R.id.tv_cancel);
 
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
-
-        v_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.show();
-            }
-        });
-
-        btn_one.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try{
-                    listener.onDelete(position, true);
+            tv_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     alertDialog.dismiss();
                 }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
+            });
 
-        btn_all.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onDelete(position, false);
-                alertDialog.dismiss();
-            }
-        });
+            v_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alertDialog.show();
+                }
+            });
+
+            btn_one.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try{
+                        listener.onDelete(position, true);
+                        alertDialog.dismiss();
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            btn_all.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onDelete(position, false);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            View view1 = LayoutInflater.from(context).inflate(R.layout.dialog_delete_all_data, null,false);
+            builder.setView(view1);
+            builder.setCancelable(false);
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            Button btn_ok = view1.findViewById(R.id.btn_ok);
+            Button btn_cancel = view1.findViewById(R.id.btn_cancel);
+            TextView tv_title = view1.findViewById(R.id.tv_title);
+            tv_title.setText("Are you sure you want to unfavorite this location?");
+
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onDelete(position, false);
+                    alertDialog.dismiss();
+                }
+            });
+
+            v_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alertDialog.show();
+                }
+            });
+        }
+
+
     }
+
 
     private void Edit_Location(View v_edit, int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

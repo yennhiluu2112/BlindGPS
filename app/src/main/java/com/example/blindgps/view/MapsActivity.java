@@ -39,6 +39,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.blindgps.R;
+import com.example.blindgps.databinding.ActivityMapsBinding;
 import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.utils.Methods;
@@ -233,7 +234,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ConnectSocket(){
         try {
 //            mSocket = IO.socket("http://192.168.1.20:5000");
-            mSocket = IO.socket("http://172.20.10.6:5000");
+            mSocket = IO.socket("http://192.168.1.154:5000");
+
             mSocket.on("server-send-data", onRetrieveData);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
             mSocket.emit("client-send-data", "Lap trinh android");
@@ -546,6 +548,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ShowHistory(Bundle extras) {
         try {
             mMap.clear();
+            if (extras.getString("time").equals("gone")){
+                binding.tvTime.setVisibility(View.GONE);
+                binding.tvTimeCount.setVisibility(View.GONE);
+            }
             binding.imvHistory.setVisibility(View.GONE);
             binding.imvDirection.setVisibility(View.GONE);
             binding.constraintBack.setVisibility(View.VISIBLE);

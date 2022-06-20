@@ -16,6 +16,9 @@
         android:theme="@style/Theme.BlindGPS"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".view.FavoriteActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.RecentLocationsActivity"
             android:exported="false" />
 
@@ -26,9 +29,7 @@
         <activity
             android:name=".view.MapsActivity"
             android:exported="false"
-            android:label="@string/title_activity_maps">
-
-        </activity>
+            android:label="@string/title_activity_maps"></activity>
         <activity
             android:name=".view.SplashActivity"
             android:exported="true">

@@ -17,6 +17,7 @@
         android:background="@drawable/bg_dialog_change_name">
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:autoSizeMaxTextSize="25sp"
