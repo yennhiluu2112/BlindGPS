@@ -548,16 +548,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ShowHistory(Bundle extras) {
         try {
             mMap.clear();
-            if (extras.getString("time").equals("gone")){
+            RecentLocations locations = (RecentLocations) extras.getSerializable("location");
+            String time_count = extras.getString("time");
+            if (time_count.equals("gone")){
                 binding.tvTime.setVisibility(View.GONE);
                 binding.tvTimeCount.setVisibility(View.GONE);
+                binding.tvName.setVisibility(View.GONE);
+                binding.constraintNameFav.setVisibility(View.VISIBLE);
             }
             binding.imvHistory.setVisibility(View.GONE);
             binding.imvDirection.setVisibility(View.GONE);
             binding.constraintBack.setVisibility(View.VISIBLE);
 
-            RecentLocations locations = (RecentLocations) extras.getSerializable("location");
-            String time_count = extras.getString("time");
+
 
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             String la_his = locations.getLatitude();
@@ -584,16 +587,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             binding.tvTime.setText(locations.getTime());
             binding.tvTimeCount.setText(time_count);
 
-            Edit_Name(locations);
+            Edit_Name(locations, time_count);
 
             binding.btnBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Intent intent = new Intent(MapsActivity.this, RecentLocationsActivity.class);
-//                    startActivity(intent);
+                    if (extras.getString("from").equals("history")){
+                        Intent intent = new Intent(MapsActivity.this, RecentLocationsActivity.class);
+                        startActivity(intent);
+                    }
+                    else{
+                        Intent intent = new Intent(MapsActivity.this, FavoriteActivity.class);
+                        startActivity(intent);
+                    }
+
 //                    marker_1.setVisible(true);
 //                    marker_2.setVisible(true);
-                    onBackPressed();
+                    //onBackPressed();
                     marker_.remove();
                 }
             });
@@ -641,7 +651,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void Edit_Name(RecentLocations locations){
+    private void Edit_Name(RecentLocations locations, String time){
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
         View view1 = LayoutInflater.from(MapsActivity.this).inflate(R.layout.dialog_change_name, null,false);
         builder.setView(view1);
@@ -654,7 +664,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Button btn_cancel = view1.findViewById(R.id.btn_back);
         EditText edt_name = view1.findViewById(R.id.edt_name);
 
-        binding.tvName.setText(locations.getLocation_name());
+        if (time.equals("gone")){
+            binding.ivEdit1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alertDialog.show();
+                }
+            });
+            binding.tvName1.setText(locations.getLocation_name());
+        }
+        else{
+            binding.ivEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alertDialog.show();
+                }
+            });
+            binding.tvName.setText(locations.getLocation_name());
+        }
 
         edt_name.setText(locations.getLocation_name());
 
@@ -665,12 +692,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        binding.ivEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.show();
-            }
-        });
+
+
 
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override

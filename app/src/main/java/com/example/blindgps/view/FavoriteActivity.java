@@ -98,6 +98,7 @@ public class FavoriteActivity extends AppCompatActivity {
                     Intent intent = new Intent(FavoriteActivity.this, MapsActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("time", "gone");
+                    bundle.putString("from", "favorite");
                     bundle.putSerializable("location", locationFavoriteList.get(position));
                     intent.putExtras(bundle);
                     startActivity(intent);

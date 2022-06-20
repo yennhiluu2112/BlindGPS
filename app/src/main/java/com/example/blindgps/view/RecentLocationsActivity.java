@@ -110,6 +110,7 @@ public class RecentLocationsActivity extends AppCompatActivity {
                     String time = Methods.getPastTimeString(date);
                     Intent intent = new Intent(RecentLocationsActivity.this, MapsActivity.class);
                     Bundle bundle = new Bundle();
+                    bundle.putString("from", "history");
                     bundle.putString("time", time);
                     bundle.putSerializable("location", locationList.get(position));
                     intent.putExtras(bundle);

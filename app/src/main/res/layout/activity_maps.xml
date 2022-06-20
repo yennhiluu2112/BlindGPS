@@ -257,6 +257,55 @@
             map:layout_constraintVertical_bias="0.0" />
 
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_name_fav"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintEnd_toEndOf="parent"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@id/tv_name1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:background="@null"
+                android:enabled="false"
+                android:gravity="center_horizontal"
+                android:text="Location name"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                map:layout_constraintBottom_toBottomOf="parent"
+                map:layout_constraintEnd_toEndOf="parent"
+                map:layout_constraintHeight_percent="0.15"
+                map:layout_constraintStart_toStartOf="parent"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintVertical_bias="0.4" />
+
+            <ImageView
+                android:id="@+id/iv_edit1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/ic_edit"
+                map:layout_constraintBottom_toBottomOf="@+id/tv_name1"
+                map:layout_constraintDimensionRatio="1:1"
+                map:layout_constraintEnd_toEndOf="parent"
+                map:layout_constraintHeight_percent="0.13"
+                map:layout_constraintHorizontal_bias="0.0"
+                map:layout_constraintStart_toEndOf="@+id/tv_name1"
+                map:layout_constraintTop_toTopOf="@+id/tv_name1"
+                map:layout_constraintVertical_bias="0.47000003" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
