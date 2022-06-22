@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.blindgps.R;
 import com.example.blindgps.databinding.ActivityRecentLocationsBinding;
+import com.example.blindgps.utils.Constant;
 import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.viewmodel.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
@@ -169,6 +170,19 @@ public class RecentLocationsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             DeleteAllData();
+                        }
+                    });
+                    binding.btnNoti.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (binding.imvNoti.getDrawable().getConstantState() == getResources().getDrawable( R.drawable.on_noti).getConstantState()){
+                                binding.imvNoti.setImageResource(R.drawable.off_noti);
+                                Constant.isNoti = false;
+                            }
+                            else{
+                                binding.imvNoti.setImageResource(R.drawable.off_noti);
+                                Constant.isNoti = true;
+                            }
                         }
                     });
                     isOpen=true;

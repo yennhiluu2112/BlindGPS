@@ -296,8 +296,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.06"
-            app:layout_constraintHorizontal_bias="0.58"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.06" />
@@ -305,13 +305,13 @@
         <ImageView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="@id/btn_delete_all"
-            app:layout_constraintEnd_toEndOf="@id/btn_delete_all"
-            app:layout_constraintStart_toStartOf="@id/btn_delete_all"
-            app:layout_constraintBottom_toBottomOf="@id/btn_delete_all"
             android:src="@drawable/ic_delete_all"
+            app:layout_constraintBottom_toBottomOf="@id/btn_delete_all"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintHeight_percent="0.03" />
+            app:layout_constraintEnd_toEndOf="@id/btn_delete_all"
+            app:layout_constraintHeight_percent="0.025"
+            app:layout_constraintStart_toStartOf="@id/btn_delete_all"
+            app:layout_constraintTop_toTopOf="@id/btn_delete_all" />
 
         <ImageView
             android:id="@+id/btn_open_favorite"
@@ -322,8 +322,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.06"
-            app:layout_constraintHorizontal_bias="0.73"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintHorizontal_bias="0.63"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.06" />
@@ -331,13 +331,40 @@
         <ImageView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="@id/btn_open_favorite"
-            app:layout_constraintEnd_toEndOf="@id/btn_open_favorite"
-            app:layout_constraintStart_toStartOf="@id/btn_open_favorite"
-            app:layout_constraintBottom_toBottomOf="@id/btn_open_favorite"
             android:src="@drawable/ic_opem_delete"
+            app:layout_constraintBottom_toBottomOf="@id/btn_open_favorite"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintHeight_percent="0.03" />
+            app:layout_constraintEnd_toEndOf="@id/btn_open_favorite"
+            app:layout_constraintHeight_percent="0.025"
+            app:layout_constraintStart_toStartOf="@id/btn_open_favorite"
+            app:layout_constraintTop_toTopOf="@id/btn_open_favorite" />
+
+        <ImageView
+            android:id="@+id/btn_noti"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_btn"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintHorizontal_bias="0.74"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.06" />
+
+        <ImageView
+            android:id="@+id/imvNoti"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/on_noti"
+            app:layout_constraintBottom_toBottomOf="@id/btn_noti"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/btn_noti"
+            app:layout_constraintHeight_percent="0.025"
+            app:layout_constraintStart_toStartOf="@id/btn_noti"
+            app:layout_constraintTop_toTopOf="@id/btn_noti" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

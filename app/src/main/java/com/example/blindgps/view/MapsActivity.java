@@ -40,6 +40,7 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.blindgps.R;
 import com.example.blindgps.databinding.ActivityMapsBinding;
+import com.example.blindgps.utils.Constant;
 import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.utils.Methods;
@@ -234,7 +235,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ConnectSocket(){
         try {
 //            mSocket = IO.socket("http://192.168.1.20:5000");
-            mSocket = IO.socket("http://192.168.1.154:5000");
+            mSocket = IO.socket("http://172.20.10.6:5000");
 
             mSocket.on("server-send-data", onRetrieveData);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -332,7 +333,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (locationsArrayList.isEmpty()){
             MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, null);
             insert_data.execute();
-            sendNotification();
+            if (Constant.isNoti){
+                sendNotification();
+            }
         }
         else{
             RecentLocations last_location = locationsArrayList.get(locationsArrayList.size()-1);
@@ -362,12 +365,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
                     insert_data.execute();
-                    sendNotification();
+                    if (Constant.isNoti){
+                        sendNotification();
+                    }
+
                 }
                 else if (diffInHour>5){
                     MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
                     insert_data.execute();
-                    sendNotification();
+                    if (Constant.isNoti){
+                        sendNotification();
+                    }
                 }
             }
             catch(Exception e){
@@ -554,14 +562,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 binding.tvTime.setVisibility(View.GONE);
                 binding.tvTimeCount.setVisibility(View.GONE);
                 binding.tvName.setVisibility(View.GONE);
+                binding.ivEdit.setVisibility(View.GONE);
                 binding.constraintNameFav.setVisibility(View.VISIBLE);
             }
             binding.imvHistory.setVisibility(View.GONE);
             binding.imvDirection.setVisibility(View.GONE);
             binding.constraintBack.setVisibility(View.VISIBLE);
-
-
-
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             String la_his = locations.getLatitude();
             String lo_his = locations.getLongitude();
@@ -600,10 +606,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Intent intent = new Intent(MapsActivity.this, FavoriteActivity.class);
                         startActivity(intent);
                     }
-
-//                    marker_1.setVisible(true);
-//                    marker_2.setVisible(true);
-                    //onBackPressed();
                     marker_.remove();
                 }
             });
@@ -692,9 +694,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
-
-
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -709,7 +708,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             @Override
                             public void onEnd() {
-                                binding.tvName.setText(name);
+                                if (time.equals("gone")){
+                                    binding.tvName1.setText(name);
+                                }
+                                else{
+                                    binding.tvName.setText(name);
+                                }
+
+
                                 MapsActivity.Load_Data load_data = new MapsActivity.Load_Data();
                                 load_data.execute();
 
@@ -719,13 +725,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         alertDialog.dismiss();
                     }
                     else{
-                        Toast.makeText(MapsActivity.this, "Please re enter", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MapsActivity.this, "Please retry", Toast.LENGTH_SHORT).show();
                     }
 
                 }
                 catch(Exception e){
                     e.printStackTrace();
-                    Toast.makeText(MapsActivity.this, "\"Please re enter", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "\"Please retry", Toast.LENGTH_SHORT).show();
                 }
             }
         });
