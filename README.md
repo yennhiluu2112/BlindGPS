@@ -1,2 +1,3 @@
-# BlindGPS: PBL5. 
+# BlindGPS: PBL5
 Danang University Of Science And Technology
+Luu Yen Nhi
