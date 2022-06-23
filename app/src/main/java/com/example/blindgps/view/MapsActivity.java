@@ -40,7 +40,6 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.blindgps.R;
 import com.example.blindgps.databinding.ActivityMapsBinding;
-import com.example.blindgps.utils.Constant;
 import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.model.RecentLocations;
 import com.example.blindgps.utils.Methods;
@@ -99,6 +98,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private RecentLocationsDAO locationsDAO;
     private static ArrayList<RecentLocations> locationsArrayList;
     private Notification notification;
+    private SharedPreferences sharedPref;
+    private static boolean isNoti;
 
 
     @Override
@@ -107,6 +108,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        sharedPref = MapsActivity.this.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        isNoti = sharedPref.getBoolean("active", true);
 
         if (!Methods.isNetworkAvailable(MapsActivity.this)){
             Toast.makeText(MapsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
@@ -333,7 +337,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (locationsArrayList.isEmpty()){
             MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, null);
             insert_data.execute();
-            if (Constant.isNoti){
+            if (isNoti){
                 sendNotification();
             }
         }
@@ -365,7 +369,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
                     insert_data.execute();
-                    if (Constant.isNoti){
+                    if (isNoti){
                         sendNotification();
                     }
 
@@ -373,7 +377,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 else if (diffInHour>5){
                     MapsActivity.Insert_Data insert_data = new MapsActivity.Insert_Data(lo2, la2, name);
                     insert_data.execute();
-                    if (Constant.isNoti){
+                    if (isNoti){
                         sendNotification();
                     }
                 }

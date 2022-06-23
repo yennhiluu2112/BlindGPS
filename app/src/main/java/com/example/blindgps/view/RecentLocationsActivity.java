@@ -6,7 +6,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -20,13 +22,10 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.blindgps.R;
 import com.example.blindgps.databinding.ActivityRecentLocationsBinding;
-import com.example.blindgps.utils.Constant;
 import com.example.blindgps.viewmodel.ExecuteQueryListener;
 import com.example.blindgps.viewmodel.OnLocationItemClickListener;
 import com.example.blindgps.model.RecentLocations;
@@ -49,12 +48,17 @@ public class RecentLocationsActivity extends AppCompatActivity {
     private static ArrayList<RecentLocations> locationList, locationListByDate;
     private static String date_from, date_to;
     private static Boolean isRotate=false, isFirst=true, isOpen=false;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityRecentLocationsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        sharedPref = RecentLocationsActivity.this.getSharedPreferences("Noti", Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
 
         if (!Methods.isNetworkAvailable(RecentLocationsActivity.this)){
             Toast.makeText(RecentLocationsActivity.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
@@ -177,11 +181,12 @@ public class RecentLocationsActivity extends AppCompatActivity {
                         public void onClick(View view) {
                             if (binding.imvNoti.getDrawable().getConstantState() == getResources().getDrawable( R.drawable.on_noti).getConstantState()){
                                 binding.imvNoti.setImageResource(R.drawable.off_noti);
-                                Constant.isNoti = false;
+                                editor.putBoolean("isNoti", true);
+                                editor.commit();
                             }
                             else{
-                                binding.imvNoti.setImageResource(R.drawable.off_noti);
-                                Constant.isNoti = true;
+                                binding.imvNoti.setImageResource(R.drawable.on_noti);
+                                editor.putBoolean("isNoti", false);
                             }
                         }
                     });
