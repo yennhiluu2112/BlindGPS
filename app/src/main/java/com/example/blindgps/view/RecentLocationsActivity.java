@@ -422,8 +422,8 @@ public class RecentLocationsActivity extends AppCompatActivity {
                     public void run() {
                         if(locationListByDate.isEmpty()) {
                             Toast.makeText(RecentLocationsActivity.this, "No Location Found", Toast.LENGTH_SHORT).show();
-                            locationAdapter.loadListLocation(locationList);
-                            locationAdapter.notifyDataSetChanged();
+                            //locationAdapter.loadListLocation(locationList);
+                            //locationAdapter.notifyDataSetChanged();
                             binding.progressCircular.setVisibility(View.GONE);
                             isFirst=true;
                         } else {

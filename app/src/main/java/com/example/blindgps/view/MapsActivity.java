@@ -101,7 +101,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SharedPreferences sharedPref;
     private static boolean isNoti;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -226,7 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .strokeColor(Color.BLUE)
                         .fillColor(Color.argb(70,110, 164, 255));
                 mMap.addCircle(circleOptions);
-
+                addFavMarker();
                 ConnectSocket();
             }
             else{
@@ -416,7 +415,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             else{
                 getCurrentLocation();
-                addFavMarker();
+
             }
 
         }
@@ -439,21 +438,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         if (!(la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d))
                         {
-                            LatLng latLng = new LatLng(Double.parseDouble(la), Double.parseDouble(lo));
-                            MarkerOptions marker = new MarkerOptions()
-                                    .position(latLng)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                                    .title(l.getLocation_name());
-                            mMap.addMarker(marker);
-
-                            CircleOptions circleOptions = new CircleOptions()
-                                    .center(latLng)
-                                    .radius(100)
-                                    .strokeWidth(3f)
-                                    .strokeColor(Color.rgb(255,165,0))
-                                    .fillColor(Color.argb(70,255,165,0));
-                            mMap.addCircle(circleOptions);
+                            FavMark(Double.parseDouble(la), Double.parseDouble(lo), l);
                         }
+                    }
+                    else{
+                        FavMark(Double.parseDouble(la), Double.parseDouble(lo), l);
                     }
                 }
             }
@@ -461,9 +450,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    private void FavMark(double la, double lo, RecentLocations l){
+        LatLng latLng = new LatLng(la, lo);
+        MarkerOptions marker = new MarkerOptions()
+                .position(latLng)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                .title(l.getLocation_name());
+        mMap.addMarker(marker);
+
+        CircleOptions circleOptions = new CircleOptions()
+                .center(latLng)
+                .radius(100)
+                .strokeWidth(3f)
+                .strokeColor(Color.rgb(255,165,0))
+                .fillColor(Color.argb(70,255,165,0));
+        mMap.addCircle(circleOptions);
+    }
+
     public void FindRoutes(LatLng start, LatLng end){
         if (start==null || end==null){
-            Toast.makeText(MapsActivity.this, "Unable to get direction", Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsActivity.this, "No destination", Toast.LENGTH_LONG).show();
         }
         else{
             Routing routing = new Routing.Builder()
@@ -790,12 +796,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationsArrayList.clear();
             }
 
-//            RecentLocations location1 = new RecentLocations( "108.214164","16.034689","location1", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()), false);
-//            RecentLocations location2 = new RecentLocations("108.211494","16.037497",  "location2", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
-//            RecentLocations location3 = new RecentLocations( "108.216224","16.037580", "location3", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
-//            RecentLocations location4 = new RecentLocations( "108.221027","16.040322", "location4", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
-//            RecentLocations location5 = new RecentLocations( "108.217725", "16.036118","location5", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
-//            locationsDAO.insert(location1, location2, location3, location4, location5);
+//            RecentLocations location1 = new RecentLocations( "108.143377","16.075306","location1", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()), false);
+//            RecentLocations location2 = new RecentLocations("108.158722","16.085706",  "location2", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location3 = new RecentLocations( "108.153121","16.068322", "location3", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location4 = new RecentLocations( "108.178654","16.060371", "location4", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location5 = new RecentLocations( "108.198731", "16.067218","location5", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location6 = new RecentLocations( "108.209132", "16.063670","location6", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location7 = new RecentLocations( "108.217963", "16.069904","location7", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location8 = new RecentLocations( "108.224978", "16.072287","location8", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location9 = new RecentLocations( "108.217725", "16.036118","location9", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//            RecentLocations location10 = new RecentLocations( "108.222893", "16.058263","location10", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(Calendar.getInstance().getTime()),false);
+//
+//            locationsDAO.insert(location1, location2, location3, location4, location5, location6, location7, location8, location9, location10);
 
             locationsArrayList.addAll(locationsDAO.getAllLocations());
 
