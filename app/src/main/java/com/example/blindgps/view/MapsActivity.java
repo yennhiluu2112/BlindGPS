@@ -210,15 +210,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 la1 = location.getLatitude();
                 lo1 = location.getLongitude();
                 latLng1 = new LatLng(la1, lo1);
-                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng1, 10));
-                //mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng1, 10));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
                 marker1 = new MarkerOptions()
                         .position(latLng1)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                         .title("You are here");
                 marker_1 = mMap.addMarker(marker1);
                 marker_1.setVisible(true);
-
 
                 CircleOptions circleOptions = new CircleOptions()
                         .center(latLng1)
@@ -239,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ConnectSocket(){
         try {
 //            mSocket = IO.socket("http://192.168.1.20:5000");
-            mSocket = IO.socket("http://172.20.10.6:5000");
+            mSocket = IO.socket("https://server-gps-blind.herokuapp.com/");
 
             mSocket.on("server-send-data", onRetrieveData);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -270,42 +269,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String obj = args[0].toString();
-                    try {
-                        JSONObject jsObj = new JSONObject(obj);
-                        String serversend = jsObj.getString("serversend");
-                        JSONObject jsonobj1 = new JSONObject(serversend);
-                        lo2 = jsonobj1.getString("longtitude");
-                        la2 = jsonobj1.getString("latitude");
+                    if (args[0]!=null){
+                        String obj = args[0].toString();
+                        try {
+                            JSONObject jsObj = new JSONObject(obj);
+                            String serversend = jsObj.getString("serversend");
+                            JSONObject jsonobj1 = new JSONObject(serversend);
+                            lo2 = jsonobj1.getString("longtitude");
+                            la2 = jsonobj1.getString("latitude");
 
-                        editor.putString("lo2", lo2);
-                        editor.putString("la2", la2);
-                        editor.apply();
+                            editor.putString("lo2", lo2);
+                            editor.putString("la2", la2);
+                            editor.apply();
 
-                        latLng2 = new LatLng(Double.parseDouble(la2), Double.parseDouble(lo2));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 10));
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
-                        marker2 = new MarkerOptions()
-                                .position(latLng2)
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                                .title(setMarkerName(la2, lo2));
-                        marker_2 = mMap.addMarker(marker2);
-                        marker_2.setVisible(true);
-                        marker_2.showInfoWindow();
+                            latLng2 = new LatLng(Double.parseDouble(la2), Double.parseDouble(lo2));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 10));
+                            mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+                            marker2 = new MarkerOptions()
+                                    .position(latLng2)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                                    .title(setMarkerName(la2, lo2));
+                            marker_2 = mMap.addMarker(marker2);
+                            marker_2.setVisible(true);
+                            marker_2.showInfoWindow();
 
-                        CircleOptions circleOptions = new CircleOptions()
-                                .center(latLng2)
-                                .radius(100)
-                                .strokeWidth(3f)
-                                .strokeColor(Color.RED)
-                                .fillColor(Color.argb(70,150,50,50));
-                        mMap.addCircle(circleOptions);
+                            CircleOptions circleOptions = new CircleOptions()
+                                    .center(latLng2)
+                                    .radius(100)
+                                    .strokeWidth(3f)
+                                    .strokeColor(Color.RED)
+                                    .fillColor(Color.argb(70,150,50,50));
+                            mMap.addCircle(circleOptions);
 
-                        InsertNewLocation(la2, lo2);
+                            InsertNewLocation(la2, lo2);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                 }
             });
         }
@@ -422,38 +424,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void addFavMarker() {
-        for (RecentLocations l : locationsArrayList){
-            if (l.getFav()){
-                String la = l.getLatitude();
-                String lo = l.getLongitude();
-                double la_from = Double.parseDouble(l.getLatitude())-0.00005;
-                double la_to = Double.parseDouble(l.getLatitude())+0.00005;
-                double lo_from = Double.parseDouble(l.getLongitude())-0.00005;
-                double lo_to = Double.parseDouble(l.getLongitude())+0.00005;
-                if (la2!=null && lo2!=null){
-                    double la_d = Double.parseDouble(la2);
-                    double lo_d = Double.parseDouble(lo2);
+        if (locationsArrayList.size()>0){
+            for (RecentLocations l : locationsArrayList){
+                if (l.getFav()){
+                    String la = l.getLatitude();
+                    String lo = l.getLongitude();
+                    double la_from = Double.parseDouble(l.getLatitude())-0.00005;
+                    double la_to = Double.parseDouble(l.getLatitude())+0.00005;
+                    double lo_from = Double.parseDouble(l.getLongitude())-0.00005;
+                    double lo_to = Double.parseDouble(l.getLongitude())+0.00005;
+                    if (la2!=null && lo2!=null){
+                        double la_d = Double.parseDouble(la2);
+                        double lo_d = Double.parseDouble(lo2);
 
-                    if (!(la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d))
-                    {
-                        LatLng latLng = new LatLng(Double.parseDouble(la), Double.parseDouble(lo));
-                        MarkerOptions marker = new MarkerOptions()
-                                .position(latLng)
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                                .title(l.getLocation_name());
-                        mMap.addMarker(marker);
+                        if (!(la_from < la_d && la_to > la_d && lo_from < lo_d && lo_to > lo_d))
+                        {
+                            LatLng latLng = new LatLng(Double.parseDouble(la), Double.parseDouble(lo));
+                            MarkerOptions marker = new MarkerOptions()
+                                    .position(latLng)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                                    .title(l.getLocation_name());
+                            mMap.addMarker(marker);
 
-                        CircleOptions circleOptions = new CircleOptions()
-                                .center(latLng)
-                                .radius(100)
-                                .strokeWidth(3f)
-                                .strokeColor(Color.rgb(255,165,0))
-                                .fillColor(Color.argb(70,255,165,0));
-                        mMap.addCircle(circleOptions);
+                            CircleOptions circleOptions = new CircleOptions()
+                                    .center(latLng)
+                                    .radius(100)
+                                    .strokeWidth(3f)
+                                    .strokeColor(Color.rgb(255,165,0))
+                                    .fillColor(Color.argb(70,255,165,0));
+                            mMap.addCircle(circleOptions);
+                        }
                     }
                 }
             }
         }
+
     }
 
     public void FindRoutes(LatLng start, LatLng end){
@@ -536,8 +541,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void setUpNotification() {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
+        PendingIntent pendingIntent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getActivity
+                    (this, 0, intent, PendingIntent.FLAG_MUTABLE);
+        }
+        else
+        {
+            pendingIntent = PendingIntent.getActivity
+                    (this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(MapsActivity.this, "My Notification");
         builder.setContentTitle("New location!")
                 .setContentText("Open maps to see")
