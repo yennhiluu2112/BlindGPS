@@ -255,8 +255,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //CMD
-                    Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MapsActivity.this, "Lỗi socket: " + args[0], Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -487,7 +486,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onRoutingFailure(RouteException e) {
         View view = findViewById(android.R.id.content);
-        Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(MapsActivity.this, e.toString(), Toast.LENGTH_LONG).show();
         e.toString();
         binding.btnOutDirection.setVisibility(View.GONE);
         Toast.makeText(MapsActivity.this, "Cannot get directions. Please choose Google Maps.", Toast.LENGTH_LONG).show();
